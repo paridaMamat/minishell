@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/01/27 17:45:08 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/02/06 15:11:44 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,35 +85,28 @@ extern int	g_exit_code;
 typedef enum e_tokens	t_tokens;
 typedef struct s_prompt	t_prompt;
 typedef struct s_list_tokens	t_list_tokens;
-typedef struct s_fds;
-typedef struct s_pipe;
+typedef struct s_fds  t_fds;
+typedef struct s_pipex  t_pipex;
 
 
-struct s_pipe
+struct s_pipex
 {
-	pid_t			pid[2];
 	pid_t			pid2[50];
 	int				end[2];
-	int				end_heredoc[2];
-	int				here_doc;
-	int				infile;
-	int				outfile;
 	char			**path;
 	char			*cmd;
 	char			**cmd_arg;
-}	t_pipe;
+};
 
-// struct s_fds
-// {
-// 	char			*infile;
-// 	char			*outfile;
-// 	char			*heredoc_delimiter;
-// 	bool			heredoc_quotes;
-// 	int				fd_in;
-// 	int				fd_out;
-// 	int				stdin_backup;
-// 	int				stdout_backup;
-// }	t_fds;
+struct s_fds
+{
+	char			*infile;
+	char			*outfile;
+	int				fd_in;
+	int				fd_out;
+	int				stdin_backup;
+	int				stdout_backup;
+};
 
 struct s_prompt
 {
@@ -123,16 +116,16 @@ struct s_prompt
 	char			*p;
 	char			**env;
 	t_list_tokens	*tokens;
+	int				(*pipes)[2];
+	t_fds			*fds;
+	t_pipex			*pipex;
 };
 
 struct s_list_tokens
 {
 	char			*str;
 	int				type;
-	bool			pipe_output;
-	int				pipe_fd;
-	t_fds			*fds;
-	t_pipe			*pipe;
+	int				index;
 	t_list_tokens	*prev;
 	t_list_tokens	*next;
 };
@@ -228,4 +221,14 @@ void	free_all(t_prompt *p);
 
 /*----------------------------- END UTILS ------------------------------------*/
 
+/*----------------------------- PRE_EXECUTION ------------------------------------*/
+/**
+   start execute the command 
+ */
+int		start_execute(t_prompt *p);
+void	open_redirection(t_prompt *p, t_list_tokens *e_tokens);
+int     count_pipe(t_prompt *p, t_list_tokens *e_tokens);
+
+
+/*----------------------------- END PRE_EXECUTION --------------------------------*/
 #endif

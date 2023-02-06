@@ -55,6 +55,8 @@ UTILS_FILES = utils utils2
 UTILS_FOLDER = utils/
 DEBUG_FILES = structures
 DEBUG_FOLDER = debug/
+EXECUTION_FILES = pre_execute
+EXECUTION_FOLDER = execution/
 
 SRCS_PATH = srcs/
 SRCS_NAMES 	= $(addsuffix .c, $(ROOT_FILES) \
@@ -63,13 +65,14 @@ SRCS_NAMES 	= $(addsuffix .c, $(ROOT_FILES) \
 							$(addprefix $(PROMPT_FOLDER), $(PROMPT_FILES)) \
 							$(addprefix $(SIGNALS_FOLDER), $(SIGNALS_FILES)) \
 							$(addprefix $(UTILS_FOLDER), $(UTILS_FILES)) \
-							$(addprefix $(DEBUG_FOLDER), $(DEBUG_FILES)))
+							$(addprefix $(DEBUG_FOLDER), $(DEBUG_FILES)) \
+							$(addprefix $(EXECUTION_FOLDER), $(EXECUTION_FILES)))
 
 # All .o files go to objs directory
 OBJS_NAMES	= $(SRCS_NAMES:.c=.o)
 OBJS_FOLDERS = $(addprefix $(OBJS_PATH), $(PARSING_FOLDER) \
 							 $(ENV_FOLDER) $(PROMPT_FOLDER) $(SIGNALS_FOLDER) \
-							 $(UTILS_FOLDER) $(DEBUG_FOLDER))
+							 $(UTILS_FOLDER) $(DEBUG_FOLDER) $(EXECUTION_FOLDER)) 
 OBJS_PATH 	= objs/
 OBJS		= $(addprefix $(OBJS_PATH), $(OBJS_NAMES))
 
