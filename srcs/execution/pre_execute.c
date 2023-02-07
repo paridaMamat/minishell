@@ -6,13 +6,13 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/06 15:35:36 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/07 15:58:39 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void    open_redirection(t_prompt *p, t_list_tokens *e_tokens)
+void    open_file(t_prompt *p, t_list_tokens *e_tokens)
 {
     t_list_tokens   *tmp;
     t_fds       *fds;
@@ -21,35 +21,27 @@ void    open_redirection(t_prompt *p, t_list_tokens *e_tokens)
     i = 0;
     tmp = e_tokens;
     fds = p->fds;
-    fds->fd_in = STDIN_FILENO;
-    fds->fd_out = STDOUT_FILENO;
     //check infile
-    while (e_tokens->next->type !=  PIPE)
+    while (tmp->type != PIPE && tmp->type != END) 
     {
-        if (e_tokens->type == INPUT)
-            fds->infile = open(e_tokens->next->str, O_RDONLY);
-        e_tokens = e_tokens->next;
-    }    
-
-
-
-
-    
-    if (e_tokens)
+        if (tmp->type == INPUT)
+            fds->infile = open(tmp->next->str, O_RDONLY);
+        tmp = tmp->next;
+    }  
+    //create outfile
+    tmp = e_tokens;
+    while (tmp->type != PIPE && fds->infile != -1 && tmp->type != END)
     {
-        if (e_tokens->type == INPUT)
-        {
-            e_tokens->pipex->infile = open(e_tokens->str, O_RDONLY);
-            if (e_tokens->pipex->infile != 0)
-                // not excute that node of command, even will not create outfile, how to do that?
-                printf("%s : No such file or directory", e_tokens->str);
-        }
-        if (e_tokens->type == R_DREDIR)
-            e_tokens->pipex->outfile = open(e_tokens->str, O_CREAT | O_WRONLY | O_APPEND, 0777);
-        if (e_tokens->type == R_REDIR)
-            e_tokens->pipex->outfile = open(e_tokens->str, O_CREAT | O_RDWR | O_TRUNC, 0644);
-        e_tokens = e_tokens->next;
+        if (tmp->type == R_DREDIR)
+            fds->outfile = open(tmp->next->str, O_CREAT | O_WRONLY | O_APPEND, 0777);
+        if (tmp->type == R_REDIR)
+            fds->outfile = open(tmp->next->str, O_CREAT | O_RDWR | O_TRUNC, 0644);
+        tmp = tmp->next;
     }
+    if (fds->infile == -1)
+        perror("infile");
+    if (fds->outfile == -1)
+        perror("outfile");
 }
 
 
@@ -72,34 +64,20 @@ int     count_pipe(t_prompt *p, t_list_tokens *e_tokens)
     return (i);
 }
 
-// void	multiple_pipe(t_pipex *pipex, char *av, char *envp[])
-// {
-// 	if (pipe(pipex->end) == -1)
-// 		exit_perror("pipe error\n", 1);
-// 	pipex->pid2[1] = fork();
-// 	if (pipex->pid2[1] == -1)
-// 		exit_perror("fork error\n", 1);
-// 	if (pipex->pid2[1] == 0)
-// 	{
-// 		if (dup2(pipex->end[1], 1) == -1)
-// 			exit_perror("dup2 fail\n", 1);
-// 		if (pipex->outfile != -1)
-// 			close(pipex->outfile);
-// 		close(pipex->end[0]);
-// 		close(pipex->end[1]);
-// 		execute(pipex, av, envp);
-// 	}
-// 	else
-// 	{
-// 		close(pipex->end[1]);
-// 		if (dup2(pipex->end[0], 0) == -1)
-// 			exit_perror("dup2 fail\n", 1);
-// 		close(pipex->end[0]);
-// 	}
-// }
 
 
 
+int     init_data(t_prompt *p)
+{
+    p->fds = malloc(sizeof(t_fds) * 1);
+    p->pipes = malloc(sizeof(t_pipex) * 1);
+    p->tokens->index = -1;
+    p->fds->infile = -2;
+    p->fds->outfile = -2;
+    p->fds->fd_in = STDIN_FILENO;
+    p->fds->fd_out = STDOUT_FILENO;
+    return (0);
+}
 
 int start_execute(t_prompt *p)
 {
@@ -109,26 +87,14 @@ int start_execute(t_prompt *p)
 
     curr = p->tokens;
     nbr_pipe = count_pipe(p, curr);
-    open_redirection(p, curr);
-    
-
-
-
-    //create all here_doc
-
-    //prepare the command list for excution, create pipes , return false for error 
-    // ret = make_pipe_and_fds(curr->fds);
-
-
-    //open all the file in the list of command no matter we use it or not
-    
-
-    //seperate command list , that have to be start with single command who is accesseble 
-    // while (curr)
-    // {
-    //     open_file(curr);
-    //     if (curr->type ==  )
-    //     curr = curr->next;
-    // }
+    while (curr)
+    {
+        open_file(p, curr);
+        execute_sys(p, curr);
+        multiple_pipe(p, curr);
+        while (curr->type != PIPE && curr->type != END)
+            curr = curr->next;
+        curr = curr->next;  
+    }
     return (0);
 }

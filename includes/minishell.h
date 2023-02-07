@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/06 15:11:44 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/07 15:43:44 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@
 # define ERR_MSG "Error: "
 # define ERR_MALLOC "Could not allocate memory.\n"
 # define ERR_GETCWD "Getcwd: "
+# define CMD_NOT_FOUND 127
+# define CMD_NOT_EXECUTABLE 126
 
 /* Colors */
 # define DEFAULT "\001\e[00;39m\002"
@@ -100,8 +102,8 @@ struct s_pipex
 
 struct s_fds
 {
-	char			*infile;
-	char			*outfile;
+	int			    infile;
+	int				outfile;
 	int				fd_in;
 	int				fd_out;
 	int				stdin_backup;
@@ -221,14 +223,25 @@ void	free_all(t_prompt *p);
 
 /*----------------------------- END UTILS ------------------------------------*/
 
-/*----------------------------- PRE_EXECUTION ------------------------------------*/
+/*----------------------------- PRE_EXECUTION --------------------------------*/
 /**
-   start execute the command 
+   Prepare for execution
  */
+int     init_data(t_prompt *p);
 int		start_execute(t_prompt *p);
-void	open_redirection(t_prompt *p, t_list_tokens *e_tokens);
+void	open_file(t_prompt *p, t_list_tokens *e_tokens);
 int     count_pipe(t_prompt *p, t_list_tokens *e_tokens);
 
+/*----------------------------- END PRE_EXECUTION -----------------------------*/
 
-/*----------------------------- END PRE_EXECUTION --------------------------------*/
+/*----------------------------- EXECUTION_SYS_BIN -----------------------------*/
+/**
+   execute the system's command 
+ */
+int		execute_sys(t_prompt *p, t_list_tokens *e_tokens);
+char	**get_path(t_pipex *pipex, char **envp);
+char	*get_cmd(char **path, char *cmd);
+char	**create_cmd_arg(t_list_tokens *e_tokens);
+
+/*----------------------------- END EXECUTION_SYS_BIN --------------------------*/
 #endif

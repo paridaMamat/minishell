@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+         #
+#    By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/16 11:46:30 by mflores-          #+#    #+#              #
-#    Updated: 2023/01/27 14:08:50 by mflores-         ###   ########.fr        #
+#    Updated: 2023/02/07 15:47:50 by pmaimait         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,7 +55,7 @@ UTILS_FILES = utils utils2
 UTILS_FOLDER = utils/
 DEBUG_FILES = structures
 DEBUG_FOLDER = debug/
-EXECUTION_FILES = pre_execute
+EXECUTION_FILES = pre_execute execution_sys execution
 EXECUTION_FOLDER = execution/
 
 SRCS_PATH = srcs/
