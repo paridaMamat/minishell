@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execution_sys_bin.c                                :+:      :+:    :+:   */
+/*   execution_sys.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:41:00 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/07 15:43:13 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/08 15:18:29 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,9 +106,13 @@ int	execute_sys(t_prompt *p, t_list_tokens *e_tokens)
 			}
 			ft_free_matrix(pipex->cmd_arg);	
 			if (result == -1)
-				perror("command not found\n");
+			{
+				perror("Command not found\n");
+				g_exit_code = CMD_NOT_FOUND;
+				return(CMD_NOT_FOUND);
+			}
 		}
 		e_tokens = e_tokens->next;
 	}
-	return (0);
+	return (result);
 }

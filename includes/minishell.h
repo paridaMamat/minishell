@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/07 15:43:44 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/08 15:22:20 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,10 +104,10 @@ struct s_fds
 {
 	int			    infile;
 	int				outfile;
-	int				fd_in;
-	int				fd_out;
-	int				stdin_backup;
-	int				stdout_backup;
+	// int				fd_in;
+	// int				fd_out;
+	// int				stdin_backup;
+	// int				stdout_backup;
 };
 
 struct s_prompt
@@ -118,7 +118,7 @@ struct s_prompt
 	char			*p;
 	char			**env;
 	t_list_tokens	*tokens;
-	int				(*pipes)[2];
+	// int				(*pipes)[2];
 	t_fds			*fds;
 	t_pipex			*pipex;
 };
@@ -128,6 +128,7 @@ struct s_list_tokens
 	char			*str;
 	int				type;
 	int				index;
+	int				nbr_pipe;
 	t_list_tokens	*prev;
 	t_list_tokens	*next;
 };
@@ -230,7 +231,7 @@ void	free_all(t_prompt *p);
 int     init_data(t_prompt *p);
 int		start_execute(t_prompt *p);
 void	open_file(t_prompt *p, t_list_tokens *e_tokens);
-int     count_pipe(t_prompt *p, t_list_tokens *e_tokens);
+int     count_pipe(t_list_tokens *e_tokens);
 
 /*----------------------------- END PRE_EXECUTION -----------------------------*/
 
@@ -244,4 +245,14 @@ char	*get_cmd(char **path, char *cmd);
 char	**create_cmd_arg(t_list_tokens *e_tokens);
 
 /*----------------------------- END EXECUTION_SYS_BIN --------------------------*/
+
+/*----------------------------- EXECUTION--------- -----------------------------*/
+/**
+   execute 
+ */
+int		multiple_pipe(t_prompt *p, t_list_tokens *e_tokens);
+int		execute(t_prompt *p, t_list_tokens *e_tokens);
+int		one_command(t_prompt *p, t_list_tokens *e_tokens);
+
+/*----------------------------- END EXECUTION------------------------------------*/
 #endif
