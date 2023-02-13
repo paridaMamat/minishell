@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+         #
+#    By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/16 11:46:30 by mflores-          #+#    #+#              #
-#    Updated: 2023/02/07 15:47:50 by pmaimait         ###   ########.fr        #
+#    Updated: 2023/02/08 16:51:50 by mflores-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,7 @@ LIB_HEADER_PATH = $(LIB_PATH)includes/
 
 # List of all .c source files
 ROOT_FILES = main
-PARSING_FILES = lexer tokens
+PARSING_FILES = parsing parsing_utils lexer tokens list_actions expansion expansion_utils
 PARSING_FOLDER = parsing/
 ENV_FILES = env
 ENV_FOLDER = env/

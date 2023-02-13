@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 01:56:18 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/08 15:27:01 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/08 16:53:12 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static void	*check_line(t_prompt *p)
 	if (p->line[0] != '\0')
 	{
 		g_exit_code = parse_line(p);
-		if (g_exit_code != 0)
+		if (g_exit_code == 0)
 		{
 			print_structs_debug(&p, 0);
 			init_data(p);

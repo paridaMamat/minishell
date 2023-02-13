@@ -6,24 +6,29 @@
 /*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 19:32:24 by mflores-          #+#    #+#             */
-/*   Updated: 2023/01/27 12:52:31 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/02/02 20:00:41 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+void	free_ptr(void *thing)
+{
+	if (thing)
+	{
+		free(thing);
+		thing = NULL;
+	}
+}
+
 void	free_line(t_prompt *p)
 {
 	if (p->line)
-	{
-		free(p->line);
-		p->line = NULL;
-	}
+		free_ptr(p->line);
 	if (p->tokens)
 	{
 		lstclear_token(&p->tokens);
-		free(p->tokens);
-		p->tokens = NULL;
+		free_ptr(p->tokens);
 	}
 }
 
@@ -34,14 +39,14 @@ void	exit_shell(t_prompt *data, int nb)
 	exit(nb);
 }
 
-void free_all(t_prompt *p)
+void	free_all(t_prompt *p)
 {
 	if (p)
 	{
 		if (p->pwd)
-			free(p->pwd);
+			free_ptr(p->pwd);
 		if (p->p)
-			free(p->p);
+			free_ptr(p->p);
 		if (p->env[0])
 			ft_free_matrix(p->env);
 		if (p->tokens)

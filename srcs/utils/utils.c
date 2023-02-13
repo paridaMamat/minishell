@@ -6,20 +6,20 @@
 /*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 15:07:26 by mflores-          #+#    #+#             */
-/*   Updated: 2023/01/24 12:48:59 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/02/02 20:01:22 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int  ft_matrixlen(char **m)
+static int	ft_matrixlen(char **m)
 {
-  int i;
+	int	i;
 
-  i = 0;
-  while (m && m[i])
-    i++;
-  return (i); 
+	i = 0;
+	while (m && m[i])
+		i++;
+	return (i);
 }
 
 void	ft_free_matrix(char **m)

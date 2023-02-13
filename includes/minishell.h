@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/08 15:22:20 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/13 14:45:31 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@
 # define ERR_MSG "Error: "
 # define ERR_MALLOC "Could not allocate memory.\n"
 # define ERR_GETCWD "Getcwd: "
+# define ERR_SYNTAX "minishell syntax error: near unexpected token "
 # define CMD_NOT_FOUND 127
 # define CMD_NOT_EXECUTABLE 126
 
@@ -84,62 +85,56 @@ extern int	g_exit_code;
 /*                                                                            */
 /******************************************************************************/
 
-typedef enum e_tokens	t_tokens;
-typedef struct s_prompt	t_prompt;
-typedef struct s_list_tokens	t_list_tokens;
-typedef struct s_fds  t_fds;
-typedef struct s_pipex  t_pipex;
-
-
-struct s_pipex
+typedef struct s_pipex
 {
 	pid_t			pid2[50];
-	int				end[2];
+	int				*fd[2];
 	char			**path;
 	char			*cmd;
 	char			**cmd_arg;
-};
+}	t_pipex;
 
-struct s_fds
+typedef struct s_fds
 {
-	int			    infile;
+	int				infile;
 	int				outfile;
+}	t_fds;
 	// int				fd_in;
 	// int				fd_out;
 	// int				stdin_backup;
 	// int				stdout_backup;
-};
 
-struct s_prompt
+typedef struct s_prompt
 {
-	char			*line;
-	char			*pwd;
-	char			*user;
-	char			*p;
-	char			**env;
-	t_list_tokens	*tokens;
-	// int				(*pipes)[2];
-	t_fds			*fds;
-	t_pipex			*pipex;
-};
+	char					*line;
+	char					*pwd;
+	char					*user;
+	char					*p;
+	char					**env;
+	struct s_list_tokens	*tokens;
+	struct s_fds			*fds;
+	struct s_pipex			*pipex;
+}	t_prompt;
 
-struct s_list_tokens
+
+typedef struct s_list_tokens
 {
-	char			*str;
-	int				type;
-	int				index;
-	int				nbr_pipe;
-	t_list_tokens	*prev;
-	t_list_tokens	*next;
-};
+	char					*str;
+	int						type;
+	int						index;
+	int						nbr_pipe;
+	struct s_list_tokens	*prev;
+	struct s_list_tokens	*next;
+}	t_list_tokens;
 
-enum e_tokens
+typedef enum e_tokens
 {
 	STRING,
-	R_REDIR, // trunc
-	R_DREDIR, //append
+	R_REDIR,
+	R_DREDIR,
 	PIPE,
 	HEREDOC,
+	H_DELIMITER,
 	INPUT,
 	BUILTINS,
 	D_QUOTE,
@@ -147,8 +142,9 @@ enum e_tokens
 	IS_DIR,
 	NOT_DIR,
 	SPACES,
+	IS_FILE,
 	END
-};
+}	t_tokens;
 
 /******************************************************************************/
 /*                                                                            */
@@ -163,12 +159,16 @@ enum e_tokens
 /*------------------------------ PARSING -------------------------------------*/
 
 int				parse_line(t_prompt *p);
-int				tokenize(t_prompt *p);
-//int				handle_quotes(t_prompt *p);
+int				set_status(int status, char *line, int i);
+int				save_word_or_sep(int *i, int start, t_prompt *p);
+int				handle_nodes(t_list_tokens *n);
+char			*get_dollar(char *str, int type);
+int				isolate_var(t_list_tokens **ptr, char *str, int type);
+int				check_tokens(t_prompt *p);
 t_list_tokens	*add_new_token(char *str, int type);
-void			lstadd_back_token(t_list_tokens **lst, t_list_tokens *new_node);
+int				lstadd_back_token(t_list_tokens **lst, t_list_tokens *new_node);
 void			lstclear_token(t_list_tokens **lst);
-void 			print_structs_debug(t_prompt **p, int with_env);
+char			*join_nodes(t_list_tokens *lst);
 
 /*----------------------------- END PARSING ----------------------------------*/
 
@@ -176,13 +176,13 @@ void 			print_structs_debug(t_prompt **p, int with_env);
 /**
 	Initializes the prompt structure.
 */
-int		init_prompt(t_prompt *p, char **env);
+int				init_prompt(t_prompt *p, char **env);
 
 /**
 	Gets the current prompt: recovers the current user and current working 
 	directory. On failure, returns NULL.
 */
-char	*get_prompt(t_prompt *p);
+char			*get_prompt(t_prompt *p);
 
 /*----------------------------- END PROMPT -----------------------------------*/
 
@@ -190,7 +190,7 @@ char	*get_prompt(t_prompt *p);
 /**
 	Set up the signal handlers
 */
-void	setup_signal_handlers(void);
+void			setup_signal_handlers(void);
 
 /*----------------------------- END SIGNALS ----------------------------------*/
 
@@ -198,61 +198,70 @@ void	setup_signal_handlers(void);
 /**
 	Frees a matrix properly.
 */
-void	ft_free_matrix(char **m);
+void			ft_free_matrix(char **m);
 
 /**
 	Modifies current matrix: returns a new matrix with the new string.
 */
-char	**ft_extend_matrix(char **in, char *newstr);
+char			**ft_extend_matrix(char **in, char *newstr);
 
 /**
 	Allocates new matrix.
 */
-char	**ft_dup_matrix(char **m);
+char			**ft_dup_matrix(char **m);
 
-void	free_line(t_prompt *p);
+void			free_ptr(void *thing);
+
+void			free_line(t_prompt *p);
 
 /**
 	Frees and exits minishell program.
 */
-void	exit_shell(t_prompt *data, int nb);
+void			exit_shell(t_prompt *data, int nb);
 
 /**
 	Frees all structures.
 */
-void	free_all(t_prompt *p);
+void			free_all(t_prompt *p);
 
 /*----------------------------- END UTILS ------------------------------------*/
+
+/*-------------------------------- DEBUG -------------------------------------*/
+
+void			print_list(t_list_tokens *list, char *name_struct, char *color);
+void			print_structs_debug(t_prompt **p, int with_env);
+
+/*------------------------------- END DEBUG ----------------------------------*/
 
 /*----------------------------- PRE_EXECUTION --------------------------------*/
 /**
    Prepare for execution
  */
-int     init_data(t_prompt *p);
-int		start_execute(t_prompt *p);
-void	open_file(t_prompt *p, t_list_tokens *e_tokens);
-int     count_pipe(t_list_tokens *e_tokens);
+int				init_data(t_prompt *p);
+int				start_execute(t_prompt *p);
+void			open_file(t_prompt *p, t_list_tokens *e_tokens);
+int				count_pipe(t_list_tokens *e_tokens);
 
-/*----------------------------- END PRE_EXECUTION -----------------------------*/
+/*---------------------------- END PRE_EXECUTION -----------------------------*/
 
-/*----------------------------- EXECUTION_SYS_BIN -----------------------------*/
+/*---------------------------- EXECUTION_SYS_BIN -----------------------------*/
 /**
    execute the system's command 
  */
-int		execute_sys(t_prompt *p, t_list_tokens *e_tokens);
-char	**get_path(t_pipex *pipex, char **envp);
-char	*get_cmd(char **path, char *cmd);
-char	**create_cmd_arg(t_list_tokens *e_tokens);
+int				execute_sys(t_prompt *p, t_list_tokens *e_tokens);
+char			**get_path(t_pipex *pipex, char **envp);
+char			*get_cmd(char **path, char *cmd);
+char			**create_cmd_arg(t_list_tokens *e_tokens);
 
-/*----------------------------- END EXECUTION_SYS_BIN --------------------------*/
+/*---------------------------- END EXECUTION_SYS_BIN -------------------------*/
 
-/*----------------------------- EXECUTION--------- -----------------------------*/
+/*----------------------------- EXECUTION ------------------------------------*/
 /**
    execute 
  */
-int		multiple_pipe(t_prompt *p, t_list_tokens *e_tokens);
-int		execute(t_prompt *p, t_list_tokens *e_tokens);
-int		one_command(t_prompt *p, t_list_tokens *e_tokens);
+int				multiple_pipe(t_prompt *p, t_list_tokens *e_tokens);
+int				execute(t_prompt *p, t_list_tokens *e_tokens);
+int				one_command(t_prompt *p, t_list_tokens *e_tokens);
 
-/*----------------------------- END EXECUTION------------------------------------*/
+/*----------------------------- END EXECUTION --------------------------------*/
 #endif
