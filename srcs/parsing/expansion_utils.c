@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/06 16:27:32 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/07 12:52:11 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/02/14 23:41:38 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,8 @@ char *str, int type)
 int	isolate_var(t_list_tokens **ptr, char *str, int type)
 {
 	int		i;
-	int		start;
 
 	i = 0;
-	start = 0;
 	while (str[i])
 	{
 		if (str[i] == '$')

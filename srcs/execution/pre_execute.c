@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pre_execute.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/14 14:52:38 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/14 23:58:46 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,5 +109,6 @@ int start_execute(t_prompt *p)
             curr = curr->next;
         curr = curr->next;  
     }
+    parent_process(p);
     return (ret);
 }

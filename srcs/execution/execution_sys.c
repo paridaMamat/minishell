@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_sys.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:41:00 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/08 15:18:29 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/14 23:42:22 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,16 +66,16 @@ char	**create_cmd_arg(t_list_tokens *e_tokens)
 	tmp = e_tokens;
 	i = 0;
 	count = 0;
-	while (e_tokens->type != PIPE && e_tokens->type == STRING)
+	while (tmp->type != PIPE && tmp->type == STRING)
 		count++;
 	array = malloc(sizeof(*array) * count);
 	if (array == NULL) 
 		return (perror("malloc"), NULL);
-	while (e_tokens->type != PIPE && e_tokens->type != END)
+	while (tmp->type != PIPE && tmp->type != END)
 	{
-		if (e_tokens->type == STRING)
-			array[i++] = e_tokens->str;
-		e_tokens = e_tokens->next;
+		if (tmp->type == STRING)
+			array[i++] = tmp->str;
+		tmp = tmp->next;
 	}
 	return (array);
 }

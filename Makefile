@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+         #
+#    By: parida <parida@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/16 11:46:30 by mflores-          #+#    #+#              #
-#    Updated: 2023/02/08 16:51:50 by mflores-         ###   ########.fr        #
+#    Updated: 2023/02/14 23:17:49 by parida           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,7 +51,7 @@ PROMPT_FILES = prompt
 PROMPT_FOLDER = prompt/
 SIGNALS_FILES = signal
 SIGNALS_FOLDER = signals/
-UTILS_FILES = utils utils2
+UTILS_FILES = utils utils2 utils3
 UTILS_FOLDER = utils/
 DEBUG_FILES = structures
 DEBUG_FOLDER = debug/

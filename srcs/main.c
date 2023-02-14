@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 01:56:18 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/14 14:45:57 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/14 23:58:38 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,6 @@ static int	check_args(int ac)
 */
 static void	*check_line(t_prompt *p)
 {
-	int	i;
-
-	i = 0;
 	if (!p->line)
 	{
 		printf(MSG_EXIT);
@@ -53,9 +50,9 @@ static void	*check_line(t_prompt *p)
 			print_structs_debug(&p, 0);
 			init_data(p);
 			g_exit_code = start_execute(p);
+			
 		}
 	}
-	parent_process(p);
 	free_line(p);
 	return (p);
 }
