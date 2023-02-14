@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 01:56:18 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/08 16:53:12 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/02/14 14:45:57 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ static int	check_args(int ac)
 	return (0);
 }
 
+
+
 /**
 	Checks line.
 	On failure or exiting, returns NULL.
@@ -28,6 +30,9 @@ static int	check_args(int ac)
 */
 static void	*check_line(t_prompt *p)
 {
+	int	i;
+
+	i = 0;
 	if (!p->line)
 	{
 		printf(MSG_EXIT);
@@ -50,6 +55,7 @@ static void	*check_line(t_prompt *p)
 			g_exit_code = start_execute(p);
 		}
 	}
+	parent_process(p);
 	free_line(p);
 	return (p);
 }

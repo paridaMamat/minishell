@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 15:12:22 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/13 14:48:53 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/14 15:20:50 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,62 +64,66 @@ int execute(t_prompt *p, t_list_tokens *e_tokens)
 
 int	child_process(t_prompt *p, t_list_tokens *e_tokens)
 {
-	int		*fd[2];
+	int		(*fd)[2];
     t_fds   *fds;
 	int		index;
 	int		ret = 0;
     
-    *fd[2] = p->pipex->fd;
+    fd = p->pipex->fd;
     fds = p->fds;
 	index = e_tokens->index;
-	close(fd[index + 1][0]);
-	if (index != 0)
+	close(fd[index + 1][1]);
+	if (fds->infile != -1 && fds->infile != -2)
 	{
-		if (fds->infile != -1 && fds->infile != -2)
-		{
-			dup2(fds->infile, STDIN_FILENO);
-			close(fds->infile);
-		}
-		else
-			dup2(fd[index][0], STDIN_FILENO);
-		close(fd[index][0]);
+		dup2(fds->infile, STDIN_FILENO);
+		close(fds->infile);
 	}
+	else
+		dup2(fd[index + 1][0], STDIN_FILENO);
+	close(fd[index + 1][0]);
 	
 	if (index != e_tokens->nbr_pipe)
 	{
+		close(fd[index + 1][0]);
 		if (fds->outfile != -1 && fds->outfile != -2)
 		{
 			dup2(fds->outfile, STDOUT_FILENO);
 			close(fds->outfile);
 		}
 		else
-			dup2(fd[e_tokens->index][1], STDOUT_FILENO);
-		close(fd[e_tokens->index][1]);
+			dup2(fd[index][1], STDOUT_FILENO);
+		close(fd[index][1]);
 	}
 	// ret = execute(p, e_tokens);
 	execlp("ls", "ls", "-al", NULL);
 	return (ret);
 }
 
-int	parent_process(t_prompt *p, t_list_tokens *e_tokens)
+int	parent_process(t_prompt *p)
 {
 	t_pipex *pipex;
     t_fds   *fds;
+	int	i;
     
+	i = 1;
     pipex = p->pipex;
     fds = p->fds;
-	close(fds->infile);
-	close(fds->outfile);
-	while (e_tokens->nbr_pipe)
+	if (fds->infile != -1 && fds->infile != -2)
+		close(fds->infile);
+	if (fds->outfile != -1 && fds->outfile != -2)
+		close(fds->outfile);
+	while (i <=p->tokens->nbr_pipe != 0)
 	{
-		close(pipex->fd[e_tokens->nbr_pipe][0]);
-		close(pipex->fd[e_tokens->nbr_pipe][1]);
-		e_tokens->nbr_pipe--;
+		close(pipex->fd[i][0]);
+		close(pipex->fd[i][1]);
+		i++;
 	}
+	while (i != -1 || errno != ECHILD)
+        i = waitpid(-1, NULL, 0);
 	free(fds);
 	free(pipex);
-	free(pipex->fd);
-	free(e_tokens);
+	if (p->tokens->nbr_pipe != 0)
+		ft_free_fd(pipex->fd);
 	return (0);
 }
 
@@ -136,7 +140,5 @@ int	multiple_pipe(t_prompt *p, t_list_tokens *e_tokens)
 		perror("fork error\n");
 	if (pipex->pid2[1] == 0)
 		child_process(p, e_tokens);
-	else
-		parent_process(p ,e_tokens);
 	return (0);
 }

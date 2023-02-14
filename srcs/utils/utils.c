@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 15:07:26 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/02 20:01:22 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/02/14 14:46:09 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,4 +93,14 @@ char	**ft_dup_matrix(char **m)
 	}
 	res[i] = NULL;
 	return (res);
+}
+
+void	ft_free_fd(int	(*fd)[2])
+{
+	int	i;
+
+	i = 0;
+	while (fd && fd[i])
+		free(fd[i++]);
+	free(fd);
 }

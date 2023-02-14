@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/13 14:45:31 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/14 14:47:20 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ extern int	g_exit_code;
 typedef struct s_pipex
 {
 	pid_t			pid2[50];
-	int				*fd[2];
+	int				(*fd)[2];
 	char			**path;
 	char			*cmd;
 	char			**cmd_arg;
@@ -199,6 +199,7 @@ void			setup_signal_handlers(void);
 	Frees a matrix properly.
 */
 void			ft_free_matrix(char **m);
+void			ft_free_fd(int	(*fd)[2]);
 
 /**
 	Modifies current matrix: returns a new matrix with the new string.
@@ -259,6 +260,8 @@ char			**create_cmd_arg(t_list_tokens *e_tokens);
 /**
    execute 
  */
+int				child_process(t_prompt *p, t_list_tokens *e_tokens);
+int				parent_process(t_prompt *p);
 int				multiple_pipe(t_prompt *p, t_list_tokens *e_tokens);
 int				execute(t_prompt *p, t_list_tokens *e_tokens);
 int				one_command(t_prompt *p, t_list_tokens *e_tokens);
