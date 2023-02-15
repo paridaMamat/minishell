@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 01:56:18 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/14 23:58:38 by parida           ###   ########.fr       */
+/*   Updated: 2023/02/15 13:21:28 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,11 @@ static void	*check_line(t_prompt *p)
 		if (g_exit_code == 0)
 		{
 			print_structs_debug(&p, 0);
-			init_data(p);
+			g_exit_code = init_data(p);
 			g_exit_code = start_execute(p);
-			
 		}
 	}
+	parent_process(p);
 	free_line(p);
 	return (p);
 }

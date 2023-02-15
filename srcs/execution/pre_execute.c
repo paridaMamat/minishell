@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pre_execute.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/14 23:58:46 by parida           ###   ########.fr       */
+/*   Updated: 2023/02/15 15:25:40 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,80 +15,87 @@
 void    open_file(t_prompt *p, t_list_tokens *e_tokens)
 {
     t_list_tokens   *tmp;
-    t_fds       *fds;
 
     tmp = e_tokens;
-    fds = p->fds;
     //check infile & create outfile
-    while (tmp->type != PIPE && fds->infile != -1 && fds->outfile != -1 && tmp->type != END)
+    while (tmp->type != PIPE && p->infile != -1 && p->outfile != -1 && tmp->type != END)
     {
         if (tmp->type == INPUT)
         {
-            close(fds->infile);
-            fds->infile = open(tmp->next->str, O_RDONLY);
+            close(p->infile);
+            p->infile = open(tmp->next->str, O_RDONLY);
         }
         if (tmp->type == R_DREDIR)
         {
-            close(fds->outfile);   
-            fds->outfile = open(tmp->next->str, O_CREAT | O_WRONLY | O_APPEND, 0777);
+            close(p->outfile);   
+            p->outfile = open(tmp->next->str, O_CREAT | O_WRONLY | O_APPEND, 0777);
         }
         if (tmp->type == R_REDIR)
         {
-            close(fds->outfile);
-            fds->outfile = open(tmp->next->str, O_CREAT | O_RDWR | O_TRUNC, 0777);
+            close(p->outfile);
+            p->outfile = open(tmp->next->str, O_CREAT | O_RDWR | O_TRUNC, 0777);
         }
         tmp = tmp->next;
     }
-    if (fds->infile == -1)
+    if (p->infile == -1)
         printf("%s: No such file or directory", tmp->next->str);
-    if (fds->outfile == -1)
+    if (p->outfile == -1)
         printf("%s: Permission denied", tmp->next->str);
 }
 
 
-int     count_pipe(t_list_tokens *e_tokens)
+int     count_pipe(t_prompt *p)
 {
     int i;
 
     i = 0;
-    while (e_tokens)
+    while (p->tokens)
     {
-        if (e_tokens->type == PIPE)
+        if (p->tokens->type == PIPE)
             i++;
-        e_tokens->index = i;
-        e_tokens = e_tokens->next;
+        p->tokens->index = i;
+        p->tokens = p->tokens->next;
     }
     printf("number of pipe is : %d\n", i);
     return (i);
 }
 
-int     init_data(t_prompt *p)
+int open_pipe(t_prompt *p)
 {
     int i;
 
     i = 1;
-    p->fds = malloc(sizeof(t_fds) * 1);
-    p->pipex = malloc(sizeof(t_pipex) * 1);
-    p->tokens->index = -1;
-    p->fds->infile = -2;
-    p->fds->outfile = -2;
-    p->tokens->nbr_pipe = count_pipe(p->tokens);
-    if (p->tokens->nbr_pipe != 0)
+    if (p->nbr_pipe != 0)
     {
-        p->pipex->fd = malloc(sizeof(*(p->pipex->fd)) * p->tokens->nbr_pipe * 2);
+        p->pipex->fd =(int **)malloc(sizeof(int *) * (p->nbr_pipe + 1));
         if (p->pipex->fd == NULL)
-            perror("malloc");    
-        while (i <= p->tokens->nbr_pipe)
+            return (free(p->pipex), perror("malloc"), 1);    
+        dprintf(2, "nbr_pipe = %d\n", p->nbr_pipe);
+        while (i <= p->nbr_pipe)
         {
-            if (pipe(p->pipex->fd[i]) == -1)
-                perror("pipe error\n");
+            p->pipex->fd[i] = (int *)malloc(sizeof(int) * 2);
+            if (!p->pipex->fd[i])
+                return(free(p->pipex->fd), free(p->pipex), perror("pipe error\n"), 2);
+            if (pipe(p->pipex->fd[i]) < 0)
+                return (free(p->pipex->fd), free(p->pipex), perror("pipe error\n"), 2);
             i++;
-            // printf("nbr_pipe = %d\n", p->tokens->nbr_pipe);
-            // printf("p->pipex->fd[p->tokens->nbr_pipe][0] = %d\n", p->pipex->fd[p->tokens->nbr_pipe][0]);
-            // printf("p->pipex->fd[p->tokens->nbr_pipe][1] = %d\n", p->pipex->fd[p->tokens->nbr_pipe][1]);
         }
     }
     return (0);
+}
+
+int     init_data(t_prompt *p)
+{
+    int ret;
+
+    ret = 0;
+    p->pipex = malloc(sizeof(t_pipex) * 1);
+    p->tokens->index = -1;
+    p->infile = -2;
+    p->outfile = -2;
+    p->nbr_pipe = count_pipe(p);
+    ret = open_pipe(p);
+    return (ret);
 }
 
 int start_execute(t_prompt *p)
@@ -101,7 +108,7 @@ int start_execute(t_prompt *p)
     while (curr)
     {
         open_file(p, curr);
-        dprintf(2, "index = %d\n", curr->index);
+        dprintf(1, "index = %d\nnbr_pipe = %d\n", curr->index, p->nbr_pipe);
         // if (curr->nbr_pipe == 0)
         //     one_command(p, curr);
         ret = multiple_pipe(p, curr);
@@ -109,6 +116,5 @@ int start_execute(t_prompt *p)
             curr = curr->next;
         curr = curr->next;  
     }
-    parent_process(p);
     return (ret);
 }

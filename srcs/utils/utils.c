@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 15:07:26 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/14 14:46:09 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/15 15:44:44 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,12 +95,16 @@ char	**ft_dup_matrix(char **m)
 	return (res);
 }
 
-void	ft_free_fd(int	(*fd)[2])
+void	ft_free_fd(int	**fd)
 {
 	int	i;
 
-	i = 0;
-	while (fd && fd[i])
-		free(fd[i++]);
-	free(fd);
+	i = 1;
+	while (*fd && fd[i])
+	{
+		free(fd[i]);
+		i++;
+	}
+	if (fd)
+		free(fd);
 }

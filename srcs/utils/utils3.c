@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils3.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 23:17:00 by parida            #+#    #+#             */
-/*   Updated: 2023/02/14 23:52:13 by parida           ###   ########.fr       */
+/*   Updated: 2023/02/15 15:12:48 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,14 @@ void    close_pipe(t_prompt *p)
     	int	i;
     
 	i = 1;
-	while (i <= p->tokens->nbr_pipe)
+	while (i <= p->nbr_pipe)
 	{
 		close(p->pipex->fd[i][0]);
 		close(p->pipex->fd[i][1]);
 		i++;
 	}
+	if (p->infile != -1 && p->infile != -2)
+		close(p->infile);
+	if (p->outfile != -1 && p->infile != -2)
+		close(p->outfile);
 }

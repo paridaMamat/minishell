@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/14 23:28:41 by parida           ###   ########.fr       */
+/*   Updated: 2023/02/15 15:14:02 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,22 +87,13 @@ extern int	g_exit_code;
 
 typedef struct s_pipex
 {
-	pid_t			pid2[50];
-	int				(*fd)[2];
+	pid_t			pid;
+	int				**fd;
 	char			**path;
 	char			*cmd;
 	char			**cmd_arg;
 }	t_pipex;
 
-typedef struct s_fds
-{
-	int				infile;
-	int				outfile;
-}	t_fds;
-	// int				fd_in;
-	// int				fd_out;
-	// int				stdin_backup;
-	// int				stdout_backup;
 
 typedef struct s_prompt
 {
@@ -112,7 +103,9 @@ typedef struct s_prompt
 	char					*p;
 	char					**env;
 	struct s_list_tokens	*tokens;
-	struct s_fds			*fds;
+	int						nbr_pipe;
+	int						infile;
+	int						outfile;
 	struct s_pipex			*pipex;
 }	t_prompt;
 
@@ -122,7 +115,6 @@ typedef struct s_list_tokens
 	char					*str;
 	int						type;
 	int						index;
-	int						nbr_pipe;
 	struct s_list_tokens	*prev;
 	struct s_list_tokens	*next;
 }	t_list_tokens;
@@ -199,7 +191,7 @@ void			setup_signal_handlers(void);
 	Frees a matrix properly.
 */
 void			ft_free_matrix(char **m);
-void			ft_free_fd(int	(*fd)[2]);
+void			ft_free_fd(int	**fd);
 
 /**
 	Modifies current matrix: returns a new matrix with the new string.
@@ -242,10 +234,11 @@ void			print_structs_debug(t_prompt **p, int with_env);
 /**
    Prepare for execution
  */
+int				open_pipe(t_prompt *p);
 int				init_data(t_prompt *p);
 int				start_execute(t_prompt *p);
 void			open_file(t_prompt *p, t_list_tokens *e_tokens);
-int				count_pipe(t_list_tokens *e_tokens);
+int				count_pipe(t_prompt *p);
 
 /*---------------------------- END PRE_EXECUTION -----------------------------*/
 
