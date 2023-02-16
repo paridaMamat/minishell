@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 15:12:22 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/15 15:41:32 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/16 18:39:42 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,26 +39,28 @@
 int execute(t_prompt *p, t_list_tokens *e_tokens)
 {
     int ret;
+	t_list_tokens	*tmp;
     
     ret = CMD_NOT_FOUND;
-    while (e_tokens->type != STRING)
-        e_tokens = e_tokens->next;
-    // if (ft_strncmp(e_tokens->str, "echo", 5) == 0 && e_tokens->nbr_pipe != 0)
-    //     ret = execute_echo(p, e_tokens);
-    // if (ft_strncmp(e_tokens->str, "cd", 3) == 0 && e_tokens->nbr_pipe != 0)
-	// 	ret = execute_cd(p, e_tokens);
-	// else if (ft_strncmp(e_tokens->str, "env", 4) == 0 && e_tokens->nbr_pipe != 0)
-	// 	ret = execute_env(p, e_tokens);
-	// else if (ft_strncmp(e_tokens->str, "export", 7) == 0 && e_tokens->nbr_pipe != 0)
-	// 	ret = execute_export(p, e_tokens);
-	// else if (ft_strncmp(e_tokens->str, "pwd", 4) == 0 && e_tokens->nbr_pipe != 0)
-	// 	ret = execute_pwd(p, e_tokens);
-	// else if (ft_strncmp(e_tokens->str, "unset", 6) == 0 && e_tokens->nbr_pipe != 0)
-	// 	ret = execute_unset(p, e_tokens);
-	// else if (ft_strncmp(e_tokens->str, "exit", 5) == 0 && e_tokens->nbr_pipe != 0)
-	// 	ret = execute_exit(p, e_tokens);
-    // else
-    ret = execute_sys(p, e_tokens);
+	tmp = e_tokens;
+ 	while (tmp->type != STRING)
+		tmp = tmp->next;
+    /*if (ft_strncmp(tmp->str, "echo", 5) == 0 && p->nbr_pipe != 0)
+        ret = execute_echo(p, tmp);
+    if (ft_strncmp(tmp->str, "cd", 3) == 0 && p->nbr_pipe != 0)
+		ret = execute_cd(p, tmp);
+	else if (ft_strncmp(tmp->str, "env", 4) == 0 && p->nbr_pipe != 0)
+		ret = execute_env(p, tmp);
+	else if (ft_strncmp(tmp->str, "export", 7) == 0 && p->nbr_pipe != 0)
+		ret = execute_export(p, tmp);
+	else if (ft_strncmp(tmp->str, "pwd", 4) == 0 && p->nbr_pipe != 0)
+		ret = execute_pwd(p, tmp);
+	else if (ft_strncmp(tmp->str, "unset", 6) == 0 && p->nbr_pipe != 0)
+		ret = execute_unset(p, tmp);
+	else if (ft_strncmp(tmp->str, "exit", 5) == 0 && p->nbr_pipe != 0)
+		ret = execute_exit(p, tmp);
+    else */
+	ret = execute_sys(p, tmp);
 	return (ret);
 }
 
@@ -66,11 +68,10 @@ int	child_process(t_prompt *p, t_list_tokens *e_tokens)
 {
 	int		**fd;
 	int		index;
-	int		ret = 0;
+	int		ret;
     
     fd = p->pipex->fd;
 	index = e_tokens->index;
-	dprintf(2, "in the child process nbr->pipe = %d  index = %d\n", p->nbr_pipe, index);
 	if (p->infile != -1 && p->infile != -2)
 		dup2(p->infile, STDIN_FILENO);
 	else if (index != 0)
@@ -80,35 +81,29 @@ int	child_process(t_prompt *p, t_list_tokens *e_tokens)
 	else if (index != p->nbr_pipe)
 		dup2(fd[index + 1][1], STDOUT_FILENO);
 	close_pipe(p);
-	// ret = execute(p, e_tokens);
-	ret = execlp("ls", "ls", "-al", NULL);
+	ret = execute(p, e_tokens);
 	return (ret);
 }
 
-int	parent_process(t_prompt *p)
+int	close_free_pipe(t_prompt *p)
 {
-	int	i;
-    
-	i = 1;
 	close_pipe(p);
-	while (i != -1 || errno != ECHILD)
-        i = waitpid(-1, NULL, 0);
 	if (p->nbr_pipe != 0)
-		ft_free_fd(p->pipex->fd);
-	free(p->pipex);
+		ft_free_fd(p);
 	return (0);
 }
 
 int	multiple_pipe(t_prompt *p, t_list_tokens *e_tokens)
 {
     t_pipex *pipex;
+	int		ret;
     
     pipex = p->pipex;
-	
+	ret = 5;
 	pipex->pid = fork();
 	if (pipex->pid == -1)
 		perror("fork error\n");
 	if (pipex->pid == 0)
-		child_process(p, e_tokens);
-	return (0);
+		ret = child_process(p, e_tokens);
+	return (ret);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_sys.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:41:00 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/14 23:42:22 by parida           ###   ########.fr       */
+/*   Updated: 2023/02/16 17:24:46 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,16 +67,24 @@ char	**create_cmd_arg(t_list_tokens *e_tokens)
 	i = 0;
 	count = 0;
 	while (tmp->type != PIPE && tmp->type == STRING)
+	{
+		tmp = tmp->next;
 		count++;
-	array = malloc(sizeof(*array) * count);
+	}
+	array = (char **)malloc(sizeof(char *) * (count + 1));
 	if (array == NULL) 
 		return (perror("malloc"), NULL);
+	tmp = e_tokens;
 	while (tmp->type != PIPE && tmp->type != END)
 	{
 		if (tmp->type == STRING)
-			array[i++] = tmp->str;
+		{
+			array[i] = ft_strdup(tmp->str);
+			i++;
+		}
 		tmp = tmp->next;
 	}
+	array[i] = 0;
 	return (array);
 }
 
@@ -84,7 +92,9 @@ int	execute_sys(t_prompt *p, t_list_tokens *e_tokens)
 {
 	int	result;
 	t_pipex		*pipex;
+	int	i;
 
+	i = 0;
 	pipex = p->pipex;
 	while (e_tokens->type != PIPE && e_tokens->type != END)
 	{

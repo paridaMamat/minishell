@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/15 15:14:02 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/16 18:42:35 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,7 @@ void			setup_signal_handlers(void);
 	Frees a matrix properly.
 */
 void			ft_free_matrix(char **m);
-void			ft_free_fd(int	**fd);
+void			ft_free_fd(t_prompt *p);
 
 /**
 	Modifies current matrix: returns a new matrix with the new string.
@@ -258,7 +258,7 @@ char			**create_cmd_arg(t_list_tokens *e_tokens);
    execute 
  */
 int				child_process(t_prompt *p, t_list_tokens *e_tokens);
-int				parent_process(t_prompt *p);
+int				close_free_pipe(t_prompt *p);
 int				multiple_pipe(t_prompt *p, t_list_tokens *e_tokens);
 int				execute(t_prompt *p, t_list_tokens *e_tokens);
 int				one_command(t_prompt *p, t_list_tokens *e_tokens);

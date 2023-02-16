@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/15 15:25:40 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/16 18:45:08 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,16 @@ void    open_file(t_prompt *p, t_list_tokens *e_tokens)
     t_list_tokens   *tmp;
 
     tmp = e_tokens;
+    if (p->infile != -2)
+    {
+        close(p->infile);
+        p->infile = -2;
+    }
+    if (p->outfile != -2)
+    {
+        close(p->outfile);
+        p->outfile = -2;
+    }
     //check infile & create outfile
     while (tmp->type != PIPE && p->infile != -1 && p->outfile != -1 && tmp->type != END)
     {
@@ -41,20 +51,22 @@ void    open_file(t_prompt *p, t_list_tokens *e_tokens)
         printf("%s: No such file or directory", tmp->next->str);
     if (p->outfile == -1)
         printf("%s: Permission denied", tmp->next->str);
+    printf("index = %d  infile = %d  outfile = %d\n", e_tokens->index, p->infile, p->outfile);
 }
-
 
 int     count_pipe(t_prompt *p)
 {
     int i;
+    t_list_tokens   *tmp;
 
     i = 0;
-    while (p->tokens)
+    tmp = p->tokens;
+    while (tmp)
     {
-        if (p->tokens->type == PIPE)
+        if (tmp->type == PIPE)
             i++;
-        p->tokens->index = i;
-        p->tokens = p->tokens->next;
+        tmp->index = i;
+        tmp = tmp->next;
     }
     printf("number of pipe is : %d\n", i);
     return (i);
@@ -64,13 +76,12 @@ int open_pipe(t_prompt *p)
 {
     int i;
 
-    i = 1;
+    i = 0;
     if (p->nbr_pipe != 0)
     {
         p->pipex->fd =(int **)malloc(sizeof(int *) * (p->nbr_pipe + 1));
         if (p->pipex->fd == NULL)
-            return (free(p->pipex), perror("malloc"), 1);    
-        dprintf(2, "nbr_pipe = %d\n", p->nbr_pipe);
+            return (free(p->pipex), perror("malloc"), 1);
         while (i <= p->nbr_pipe)
         {
             p->pipex->fd[i] = (int *)malloc(sizeof(int) * 2);
@@ -90,9 +101,11 @@ int     init_data(t_prompt *p)
 
     ret = 0;
     p->pipex = malloc(sizeof(t_pipex) * 1);
-    p->tokens->index = -1;
+    if (!p->pipex)
+        return (perror("malloc"), 2);
     p->infile = -2;
     p->outfile = -2;
+    p->tokens->index = -1;
     p->nbr_pipe = count_pipe(p);
     ret = open_pipe(p);
     return (ret);
@@ -102,13 +115,14 @@ int start_execute(t_prompt *p)
 {
     t_list_tokens   *curr;
     int ret;
-
+    int	i;
+        
     curr = p->tokens;
+    i = 1;
     ret = 0;
     while (curr)
     {
         open_file(p, curr);
-        dprintf(1, "index = %d\nnbr_pipe = %d\n", curr->index, p->nbr_pipe);
         // if (curr->nbr_pipe == 0)
         //     one_command(p, curr);
         ret = multiple_pipe(p, curr);
@@ -116,5 +130,8 @@ int start_execute(t_prompt *p)
             curr = curr->next;
         curr = curr->next;  
     }
+	while (i != -1 || errno != ECHILD)
+        i = waitpid(-1, NULL, 0);
+    close_free_pipe(p);
     return (ret);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 19:32:24 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/02 20:00:41 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/02/16 11:22:10 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ void	free_line(t_prompt *p)
 		lstclear_token(&p->tokens);
 		free_ptr(p->tokens);
 	}
+	if (p->pipex)
+		free_ptr(p->pipex);
 }
 
 void	exit_shell(t_prompt *data, int nb)
