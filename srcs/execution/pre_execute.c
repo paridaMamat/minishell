@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/17 14:56:15 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/17 17:24:51 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,17 +32,20 @@ void    open_file(t_prompt *p, t_list_tokens *e_tokens)
     {
         if (tmp->type == INPUT)
         {
-            close(p->infile);
+            if (p->infile != -2)
+                close(p->infile);
             p->infile = open(tmp->next->str, O_RDONLY);
         }
         if (tmp->type == R_DREDIR)
         {
-            close(p->outfile);   
+            if (p->outfile != -2)
+                close(p->outfile);  
             p->outfile = open(tmp->next->str, O_CREAT | O_WRONLY | O_APPEND, 0777);
         }
         if (tmp->type == R_REDIR)
         {
-            close(p->outfile);
+            if (p->outfile != -2)
+                close(p->outfile); 
             p->outfile = open(tmp->next->str, O_CREAT | O_RDWR | O_TRUNC, 0777);
         }
         tmp = tmp->next;
@@ -126,13 +129,15 @@ int start_execute(t_prompt *p)
     {
         open_file(p, curr);
         ret = execute_cmd(p, curr);
+        dprintf(2, "execute_cmd (1) = %d\n", ret);
         while (curr->type != PIPE && curr->type != END)
             curr = curr->next;
         curr = curr->next;  
     }
     if (p->nbr_pipe != 0)
         close_free_pipe(p);
- while (i != -1 || errno != ECHILD)
+    while (i != -1 || errno != ECHILD)
         i = waitpid(-1, NULL, 0);
+    dprintf(2, "execute_cmd (2) = %d\n", ret);
     return (ret);
 }

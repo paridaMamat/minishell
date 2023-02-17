@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:41:00 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/16 17:24:46 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/17 17:08:07 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,8 @@ int	execute_sys(t_prompt *p, t_list_tokens *e_tokens)
 			ft_free_matrix(pipex->cmd_arg);	
 			if (result == -1)
 			{
-				perror("Command not found\n");
-				g_exit_code = CMD_NOT_FOUND;
+				perror("Command not found2\n");
+				// g_exit_code = CMD_NOT_FOUND;
 				return(CMD_NOT_FOUND);
 			}
 		}

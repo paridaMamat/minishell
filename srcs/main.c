@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 01:56:18 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/16 13:59:02 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/17 17:22:03 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ static int	check_args(int ac)
 */
 static void	*check_line(t_prompt *p)
 {
+	int ret;
+	
+	ret = 0;
 	if (!p->line)
 	{
 		printf(MSG_EXIT);
@@ -50,7 +53,8 @@ static void	*check_line(t_prompt *p)
 			// print_structs_debug(&p, 0);
 			g_exit_code = init_data(p);
 			if (g_exit_code == 0)
-				g_exit_code = start_execute(p);
+				ret = start_execute(p);
+			dprintf(2, "start_execute = %d\n", ret);
 		}
 	}
 	free_line(p);
