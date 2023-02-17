@@ -1,0 +1,10 @@
+b
+c
+includes
+libft
+Makefile
+minishell
+objs
+readline_leaks.supp
+srcs
+testing.sh

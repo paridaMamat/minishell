@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 23:17:00 by parida            #+#    #+#             */
-/*   Updated: 2023/02/16 15:12:31 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/17 11:44:56 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void    close_pipe(t_prompt *p)
 {
     	int	i;
     
-	i = 1;
+	i = 0;
 	while (i <= p->nbr_pipe)
 	{
 		close(p->pipex->fd[i][0]);

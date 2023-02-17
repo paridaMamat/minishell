@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/16 18:45:08 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/17 14:56:15 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,11 +77,13 @@ int open_pipe(t_prompt *p)
     int i;
 
     i = 0;
+    p->pipex->fd = 0;
     if (p->nbr_pipe != 0)
     {
-        p->pipex->fd =(int **)malloc(sizeof(int *) * (p->nbr_pipe + 1));
+        p->pipex->fd =(int **)malloc(sizeof(int *) * (p->nbr_pipe + 2));
         if (p->pipex->fd == NULL)
             return (free(p->pipex), perror("malloc"), 1);
+        p->pipex->fd[p->nbr_pipe + 1] = 0;
         while (i <= p->nbr_pipe)
         {
             p->pipex->fd[i] = (int *)malloc(sizeof(int) * 2);
@@ -123,15 +125,14 @@ int start_execute(t_prompt *p)
     while (curr)
     {
         open_file(p, curr);
-        // if (curr->nbr_pipe == 0)
-        //     one_command(p, curr);
-        ret = multiple_pipe(p, curr);
+        ret = execute_cmd(p, curr);
         while (curr->type != PIPE && curr->type != END)
             curr = curr->next;
         curr = curr->next;  
     }
-	while (i != -1 || errno != ECHILD)
+    if (p->nbr_pipe != 0)
+        close_free_pipe(p);
+ while (i != -1 || errno != ECHILD)
         i = waitpid(-1, NULL, 0);
-    close_free_pipe(p);
     return (ret);
 }
