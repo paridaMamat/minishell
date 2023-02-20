@@ -3,12 +3,13 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: parida <parida@student.42.fr>              +#+  +:+       +#+         #
+#    By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/16 11:46:30 by mflores-          #+#    #+#              #
-#    Updated: 2023/02/14 23:17:49 by parida           ###   ########.fr        #
+#    Updated: 2023/02/19 11:07:06 by mflores-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
 
 #------------------------------------------------------------------------------#
 #									GENERAL               				       #
@@ -43,7 +44,8 @@ LIB_HEADER_PATH = $(LIB_PATH)includes/
 
 # List of all .c source files
 ROOT_FILES = main
-PARSING_FILES = parsing parsing_utils lexer tokens list_actions expansion expansion_utils
+PARSING_FILES = parsing parsing_utils lexer tokens list_actions expansion \
+				expansion_utils heredoc
 PARSING_FOLDER = parsing/
 ENV_FILES = env
 ENV_FOLDER = env/
@@ -53,6 +55,8 @@ SIGNALS_FILES = signal
 SIGNALS_FOLDER = signals/
 UTILS_FILES = utils utils2 utils3
 UTILS_FOLDER = utils/
+#BUILTINS_FILES = echo_builtin env_builtin pwd_builtin exit_builtin
+#BUILTINS_FOLDER = builtins/
 DEBUG_FILES = structures
 DEBUG_FOLDER = debug/
 EXECUTION_FILES = pre_execute execution_sys execution
@@ -65,8 +69,9 @@ SRCS_NAMES 	= $(addsuffix .c, $(ROOT_FILES) \
 							$(addprefix $(PROMPT_FOLDER), $(PROMPT_FILES)) \
 							$(addprefix $(SIGNALS_FOLDER), $(SIGNALS_FILES)) \
 							$(addprefix $(UTILS_FOLDER), $(UTILS_FILES)) \
-							$(addprefix $(DEBUG_FOLDER), $(DEBUG_FILES)) \
-							$(addprefix $(EXECUTION_FOLDER), $(EXECUTION_FILES)))
+							$(addprefix $(EXECUTION_FOLDER), $(EXECUTION_FILES)) \
+							$(addprefix $(DEBUG_FOLDER), $(DEBUG_FILES)))
+#							$(addprefix $(BUILTINS_FOLDER), $(BUILTINS_FILES)) \
 
 # All .o files go to objs directory
 OBJS_NAMES	= $(SRCS_NAMES:.c=.o)

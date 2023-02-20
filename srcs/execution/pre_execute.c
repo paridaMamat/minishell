@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/17 17:24:51 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/20 10:39:33 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,12 @@ void    open_file(t_prompt *p, t_list_tokens *e_tokens)
     //check infile & create outfile
     while (tmp->type != PIPE && p->infile != -1 && p->outfile != -1 && tmp->type != END)
     {
+        if (tmp->type == HEREDOC)
+        {
+            if (p->infile != -2)
+                close(p->infile);
+            p->infile = open(tmp->str, O_RDONLY);
+        }
         if (tmp->type == INPUT)
         {
             if (p->infile != -2)
@@ -105,9 +111,9 @@ int     init_data(t_prompt *p)
     int ret;
 
     ret = 0;
-    p->pipex = malloc(sizeof(t_pipex) * 1);
+/*     p->pipex = malloc(sizeof(t_pipex) * 1);
     if (!p->pipex)
-        return (perror("malloc"), 2);
+        return (perror("malloc"), 2); */
     p->infile = -2;
     p->outfile = -2;
     p->tokens->index = -1;
@@ -129,7 +135,7 @@ int start_execute(t_prompt *p)
     {
         open_file(p, curr);
         ret = execute_cmd(p, curr);
-        dprintf(2, "execute_cmd (1) = %d\n", ret);
+        // dprintf(2, "execute_cmd (1) = %d\n", ret);
         while (curr->type != PIPE && curr->type != END)
             curr = curr->next;
         curr = curr->next;  
@@ -138,6 +144,6 @@ int start_execute(t_prompt *p)
         close_free_pipe(p);
     while (i != -1 || errno != ECHILD)
         i = waitpid(-1, NULL, 0);
-    dprintf(2, "execute_cmd (2) = %d\n", ret);
+    // dprintf(2, "execute_cmd (2) = %d\n", ret);
     return (ret);
 }

@@ -6,7 +6,7 @@
 /*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/27 13:51:45 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/08 10:57:20 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/02/17 21:37:49 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ static char	*show_type(int type)
 		str = "IS_FILE";
 	else if (type == H_DELIMITER)
 		str = "H_DELIMITER";
+	else if (type == H_DELIMITER_QUOTES)
+		str = "H_DELIMITER_QUOTES";
 	return (str);
 }
 

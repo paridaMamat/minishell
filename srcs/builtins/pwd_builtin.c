@@ -1,29 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   pwd_builtin.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/20 15:28:44 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/16 10:39:04 by mflores-         ###   ########.fr       */
+/*   Created: 2023/02/15 19:24:36 by mflores-          #+#    #+#             */
+/*   Updated: 2023/02/15 19:40:19 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*char	*find_str_i(char **env, char *str)
+int	minishell_pwd(t_prompt *data)
 {
-	int	i;
-	int	len;
+	char	buffer[BUFSIZ];
+	char	*pwd;
 
-	i = 0;
-	len = ft_strlen(str);
-	while (env[i] && env[i][0])
+	if (data->pwd)
 	{
-		if (ft_strncmp(str, env[i], len) == 0)
-			return (env[i] + (len + 1));
-		i++;
+		ft_putendl_fd(data->pwd, STDOUT_FILENO);
+		return (0);
 	}
-	return (NULL);
-} */
+	pwd = getcwd(buffer, BUFSIZ);
+	if (pwd)
+	{
+		ft_putendl_fd(pwd, STDOUT_FILENO);
+		return (0);
+	}
+	return (1);
+}

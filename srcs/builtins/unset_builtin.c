@@ -1,29 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   unset_builtin.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/20 15:28:44 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/16 10:39:04 by mflores-         ###   ########.fr       */
+/*   Created: 2023/02/15 19:48:39 by mflores-          #+#    #+#             */
+/*   Updated: 2023/02/16 09:55:54 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*char	*find_str_i(char **env, char *str)
+int	minishell_unset(t_prompt *data, char **args)
 {
 	int	i;
-	int	len;
+	int	index;
+	int	res;
 
-	i = 0;
-	len = ft_strlen(str);
-	while (env[i] && env[i][0])
+	res = 0;
+	i = 1;
+	while (args[i])
 	{
-		if (ft_strncmp(str, env[i], len) == 0)
-			return (env[i] + (len + 1));
+		if (!is_valid_env_var_key(args[i]) || ft_strchr(args[i], '=') != NULL)
+		{
+            ft_putstr_fd("minishell: unset: not a valid identifier", STDOUT_FILENO);
+			res = 1;
+		}
+		else
+		{
+			index = get_env_var_index(data->env, args[i]);
+			if (index != -1)
+				remove_env_var(data, index);
+		}
 		i++;
 	}
-	return (NULL);
-} */
+	return (res);
+}

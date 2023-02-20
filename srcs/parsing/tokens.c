@@ -6,7 +6,7 @@
 /*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/26 14:24:01 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/08 16:22:21 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/02/17 21:42:15 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static int	delete_quotes(int *i, char *str, t_list_tokens **sub_tok, char c)
 	return (1);
 }
 
-static int	check_string(t_list_tokens **sub_tokens, char *str)
+int	check_string(t_list_tokens **sub_tokens, char *str)
 {
 	int	i;
 
@@ -92,7 +92,7 @@ static char	*check_for_dollars(t_list_tokens *s_tokens)
 		else if ((curr->type == D_QUOTE || curr->type == STRING)
 			&& ft_strchr(curr->str, '$'))
 		{
-			curr->str = get_dollar(curr->str, curr->type);
+			curr->str = get_dollar(curr->str, curr->type, 0);
 			if (!curr->str)
 				return (NULL);
 		}
@@ -119,7 +119,6 @@ int	handle_nodes(t_list_tokens *n)
 	sub_tokens = NULL;
 	if (!check_string(&sub_tokens, n->str))
 		return (0);
-	print_list(sub_tokens, "SUB_TOKENS", YELLOW);
 	free(n->str);
 	n->str = check_for_dollars(sub_tokens);
 	if (!n->str)

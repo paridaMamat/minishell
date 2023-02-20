@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prompt.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 12:37:43 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/02 19:58:18 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/02/20 10:42:30 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ static char	*pimp_pwd(char **path, char *username)
 	if (!*path)
 		return (NULL);
 	tmp2 = ft_strnstr(*path, username, ft_strlen(*path));
+	if (!tmp2)
+		return (NULL);
 	color = ft_strjoin(GREEN, "\001~\002");
 	if (!color)
 		return (NULL);
@@ -77,5 +79,11 @@ int	init_prompt(t_prompt *p, char **env)
 	p->user = NULL;
 	p->pwd = NULL;
 	p->p = NULL;
+	p->pipex = malloc(sizeof(t_pipex) * 1);
+	if (!p->pipex)
+	{
+		ft_free_matrix(p->env);
+        return (perror("malloc"), 0);
+	}
 	return (1);
 }

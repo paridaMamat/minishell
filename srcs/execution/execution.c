@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 15:12:22 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/17 17:25:27 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/17 17:52:39 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,6 @@ int	execute_cmd(t_prompt *p, t_list_tokens *e_tokens)
 		if (pipex->pid == 0)
 			ret = child_process(p, e_tokens);
 	}
-	dprintf(2, "child_process = %d\n", ret);
+	// dprintf(2, "child_process = %d\n", ret);
 	return (ret);
 }

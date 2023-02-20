@@ -6,11 +6,25 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 19:32:24 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/16 11:22:10 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/20 10:43:53 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "minishell.h"
+
+static void	unlink_files(t_list_tokens **t)
+{
+	t_list_tokens	*tmp;
+
+	tmp = *t;
+	while (tmp->next != NULL)
+	{
+		if (tmp->type == HEREDOC)
+			unlink(tmp->str);
+		tmp = tmp->next;
+	}
+}
 
 void	free_ptr(void *thing)
 {
@@ -27,6 +41,7 @@ void	free_line(t_prompt *p)
 		free_ptr(p->line);
 	if (p->tokens)
 	{
+		unlink_files(&p->tokens);
 		lstclear_token(&p->tokens);
 		free_ptr(p->tokens);
 	}
@@ -34,17 +49,12 @@ void	free_line(t_prompt *p)
 		free_ptr(p->pipex);
 }
 
-void	exit_shell(t_prompt *data, int nb)
-{
-	if (data)
-		free_all(data);
-	exit(nb);
-}
-
 void	free_all(t_prompt *p)
 {
 	if (p)
 	{
+		if (p->line)
+			free_ptr(p->line);
 		if (p->pwd)
 			free_ptr(p->pwd);
 		if (p->p)
@@ -53,21 +63,15 @@ void	free_all(t_prompt *p)
 			ft_free_matrix(p->env);
 		if (p->tokens)
 			lstclear_token(&p->tokens);
+		if (p->pipex)
+			free_ptr(p->pipex);
 	}
 }
 
-/*char	*find_str_i(char **env, char *str)
+void	exit_shell(t_prompt *data, int nb)
 {
-	int	i;
-	int	len;
-
-	i = 0;
-	len = ft_strlen(str);
-	while (env[i] && env[i][0])
-	{
-		if (ft_strncmp(str, env[i], len) == 0)
-			return (env[i] + (len + 1));
-		i++;
-	}
-	return (NULL);
-} */
+	rl_clear_history();
+	if (data)
+		free_all(data);
+	exit(nb);
+}

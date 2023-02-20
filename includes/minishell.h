@@ -3,12 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/17 16:13:26 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/19 11:06:50 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
@@ -42,16 +44,21 @@
 /* OTHER MESSAGES */
 # define READ_END 0
 # define WRITE_END 1
-# define MSG_EXIT "exit\n"
+# define MSG_EXIT "exit"
+//# define HEREDOC_NAME "/tmp/.minishell_heredoc_"
+# define HEREDOC_NAME ".minishell_heredoc_"
 
 /* ERROR MESSAGES */
 # define ERR_USAGE "Usage: ./minishell"
 # define ERR_MSG "Error: "
 # define ERR_MALLOC "Could not allocate memory.\n"
 # define ERR_GETCWD "Getcwd: "
-# define ERR_SYNTAX "minishell syntax error: near unexpected token "
+# define ERR_SYNTAX "minishell: syntax error: near unexpected token `"
+# define ERR_HEREDOC "minishell: warning: here-document delimited by \
+end-of-file: (wanted `"
 # define CMD_NOT_FOUND 127
 # define CMD_NOT_EXECUTABLE 126
+# define ERR_NOT_ASKED "Not asked in the mandatory part of minishell"
 
 /* Colors */
 # define DEFAULT "\001\e[00;39m\002"
@@ -109,7 +116,6 @@ typedef struct s_prompt
 	struct s_pipex			*pipex;
 }	t_prompt;
 
-
 typedef struct s_list_tokens
 {
 	char					*str;
@@ -127,6 +133,7 @@ typedef enum e_tokens
 	PIPE,
 	HEREDOC,
 	H_DELIMITER,
+	H_DELIMITER_QUOTES,
 	INPUT,
 	BUILTINS,
 	D_QUOTE,
@@ -150,13 +157,17 @@ typedef enum e_tokens
 
 /*------------------------------ PARSING -------------------------------------*/
 
+int				set_syntax_error(int status, char *err_msg);
 int				parse_line(t_prompt *p);
 int				set_status(int status, char *line, int i);
 int				save_word_or_sep(int *i, int start, t_prompt *p);
+int				check_string(t_list_tokens **sub_tokens, char *str);
 int				handle_nodes(t_list_tokens *n);
-char			*get_dollar(char *str, int type);
+char			*get_dollar(char *str, int type, int heredoc);
 int				isolate_var(t_list_tokens **ptr, char *str, int type);
+int				handle_heredoc_delimiter(t_list_tokens *t);
 int				check_tokens(t_prompt *p);
+int				continue_checks(t_prompt *p, int flag, int *ret);
 t_list_tokens	*add_new_token(char *str, int type);
 int				lstadd_back_token(t_list_tokens **lst, t_list_tokens *new_node);
 void			lstclear_token(t_list_tokens **lst);
@@ -183,6 +194,7 @@ char			*get_prompt(t_prompt *p);
 	Set up the signal handlers
 */
 void			setup_signal_handlers(void);
+void			setup_signal_heredoc(void);
 
 /*----------------------------- END SIGNALS ----------------------------------*/
 
@@ -223,12 +235,23 @@ void			free_all(t_prompt *p);
 void			close_pipe(t_prompt *p);
 /*----------------------------- END UTILS ------------------------------------*/
 
-/*-------------------------------- DEBUG -------------------------------------*/
+/*------------------------------- DEBUG --------------------------------------*/
 
 void			print_list(t_list_tokens *list, char *name_struct, char *color);
 void			print_structs_debug(t_prompt **p, int with_env);
 
-/*------------------------------- END DEBUG ----------------------------------*/
+/*----------------------------- END DEBUG ------------------------------------*/
+
+/*------------------------------ BUILTINS ------------------------------------*/
+
+//int		minishell_echo(char **args);
+//int		minishell_pwd(t_prompt *data);
+//int 		minishell_env(t_prompt *data, char **args);
+//int		minishell_cd(t_prompt *data);
+//int		minishell_unset(t_prompt *data, char **args);
+//int 		minishell_exit(t_prompt *data, char **args);
+
+/*---------------------------- END BUILTINS ----------------------------------*/
 
 /*----------------------------- PRE_EXECUTION --------------------------------*/
 /**

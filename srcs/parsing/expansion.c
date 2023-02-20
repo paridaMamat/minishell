@@ -6,7 +6,7 @@
 /*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/06 15:16:28 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/08 16:26:24 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/02/17 21:40:13 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,15 @@ static char	*get_var(char *str)
 	}
 }
 
-static int	expand_nodes_with_variables(t_list_tokens **ptr)
+static int	expand_nodes_with_variables(t_list_tokens **ptr, int heredoc)
 {
 	t_list_tokens	*tmp;
 
 	tmp = *ptr;
 	while (tmp)
 	{
-		if (tmp->str[0] == '$' && tmp->str[1] == '\0' && tmp->next)
+		if (tmp->str[0] == '$' && tmp->str[1] == '\0' && tmp->next
+			&& heredoc == 0)
 		{
 			free(tmp->str);
 			tmp->str = ft_strdup("");
@@ -62,7 +63,7 @@ static int	expand_nodes_with_variables(t_list_tokens **ptr)
 	return (1);
 }
 
-char	*get_dollar(char *str, int type)
+char	*get_dollar(char *str, int type, int heredoc)
 {
 	char			*new_str;
 	t_list_tokens	*ptr_str;
@@ -71,7 +72,7 @@ char	*get_dollar(char *str, int type)
 	new_str = NULL;
 	if (isolate_var(&ptr_str, str, type) == -1)
 		return (NULL);
-	if (!expand_nodes_with_variables(&ptr_str))
+	if (!expand_nodes_with_variables(&ptr_str, heredoc))
 	{
 		lstclear_token(&ptr_str);
 		return (NULL);

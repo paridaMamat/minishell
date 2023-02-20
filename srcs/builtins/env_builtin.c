@@ -1,29 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   env_builtin.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/20 15:28:44 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/16 10:39:04 by mflores-         ###   ########.fr       */
+/*   Created: 2023/02/15 19:41:53 by mflores-          #+#    #+#             */
+/*   Updated: 2023/02/15 19:45:05 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*char	*find_str_i(char **env, char *str)
+int minishell_env(t_prompt *data, char **args)
 {
 	int	i;
-	int	len;
 
+	if (args && args[1])
+		return (ft_putendl_fd("minishell: env: too many arguments", STDERR_FILENO), 1);
 	i = 0;
-	len = ft_strlen(str);
-	while (env[i] && env[i][0])
-	{
-		if (ft_strncmp(str, env[i], len) == 0)
-			return (env[i] + (len + 1));
-		i++;
-	}
-	return (NULL);
-} */
+	if (!data->env)
+		return (1);
+	while (data->env[i])
+		ft_putendl_fd(data->env[i++], STDOUT_FILENO);
+	return (0);
+}
