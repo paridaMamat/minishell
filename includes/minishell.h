@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/19 11:06:50 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/02/22 15:11:57 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,6 +233,11 @@ void			free_all(t_prompt *p);
 	close all pipe
 */
 void			close_pipe(t_prompt *p);
+
+/**
+	is this a function of builtings
+*/
+int				is_built(char *str);
 /*----------------------------- END UTILS ------------------------------------*/
 
 /*------------------------------- DEBUG --------------------------------------*/
@@ -244,9 +249,9 @@ void			print_structs_debug(t_prompt **p, int with_env);
 
 /*------------------------------ BUILTINS ------------------------------------*/
 
-//int		minishell_echo(char **args);
+int			minishell_echo(t_prompt *p, t_list_tokens *e_tokens);
 //int		minishell_pwd(t_prompt *data);
-//int 		minishell_env(t_prompt *data, char **args);
+int			minishell_env(t_prompt *p, t_list_tokens *e_tokens);
 //int		minishell_cd(t_prompt *data);
 //int		minishell_unset(t_prompt *data, char **args);
 //int 		minishell_exit(t_prompt *data, char **args);
@@ -287,4 +292,14 @@ int				execute(t_prompt *p, t_list_tokens *e_tokens);
 int				one_command(t_prompt *p, t_list_tokens *e_tokens);
 
 /*----------------------------- END EXECUTION --------------------------------*/
+
+/*----------------------------- EXECUTE_ONE_CMD -------------------------------*/
+/**
+   execute one command
+ */
+int				execute_one_built(t_prompt *p, t_list_tokens *e_tokens);
+int				execute_one_sys(t_prompt *p, t_list_tokens *e_tokens);
+/*----------------------------- END  EXECUTE_ONE_CMD  -------------------------*/
+
+
 #endif

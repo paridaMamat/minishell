@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+         #
+#    By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/16 11:46:30 by mflores-          #+#    #+#              #
-#    Updated: 2023/02/19 11:07:06 by mflores-         ###   ########.fr        #
+#    Updated: 2023/02/22 15:12:31 by pmaimait         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,11 +55,11 @@ SIGNALS_FILES = signal
 SIGNALS_FOLDER = signals/
 UTILS_FILES = utils utils2 utils3
 UTILS_FOLDER = utils/
-#BUILTINS_FILES = echo_builtin env_builtin pwd_builtin exit_builtin
-#BUILTINS_FOLDER = builtins/
+BUILTINS_FILES = echo_builtin env_builtin
+BUILTINS_FOLDER = builtins/
 DEBUG_FILES = structures
 DEBUG_FOLDER = debug/
-EXECUTION_FILES = pre_execute execution_sys execution
+EXECUTION_FILES = pre_execute execution_sys execution execute_one_cmd
 EXECUTION_FOLDER = execution/
 
 SRCS_PATH = srcs/
@@ -70,14 +70,15 @@ SRCS_NAMES 	= $(addsuffix .c, $(ROOT_FILES) \
 							$(addprefix $(SIGNALS_FOLDER), $(SIGNALS_FILES)) \
 							$(addprefix $(UTILS_FOLDER), $(UTILS_FILES)) \
 							$(addprefix $(EXECUTION_FOLDER), $(EXECUTION_FILES)) \
-							$(addprefix $(DEBUG_FOLDER), $(DEBUG_FILES)))
-#							$(addprefix $(BUILTINS_FOLDER), $(BUILTINS_FILES)) \
+							$(addprefix $(DEBUG_FOLDER), $(DEBUG_FILES)) \
+							$(addprefix $(BUILTINS_FOLDER), $(BUILTINS_FILES))) 
 
 # All .o files go to objs directory
 OBJS_NAMES	= $(SRCS_NAMES:.c=.o)
 OBJS_FOLDERS = $(addprefix $(OBJS_PATH), $(PARSING_FOLDER) \
 							 $(ENV_FOLDER) $(PROMPT_FOLDER) $(SIGNALS_FOLDER) \
-							 $(UTILS_FOLDER) $(DEBUG_FOLDER) $(EXECUTION_FOLDER)) 
+							 $(UTILS_FOLDER) $(DEBUG_FOLDER) $(EXECUTION_FOLDER) \
+							 $(BUILTINS_FOLDER)) 
 OBJS_PATH 	= objs/
 OBJS		= $(addprefix $(OBJS_PATH), $(OBJS_NAMES))
 

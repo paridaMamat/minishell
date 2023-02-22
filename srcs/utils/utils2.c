@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 19:32:24 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/20 10:43:53 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/22 11:16:50 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,6 @@ void	free_line(t_prompt *p)
 		lstclear_token(&p->tokens);
 		free_ptr(p->tokens);
 	}
-	if (p->pipex)
-		free_ptr(p->pipex);
 }
 
 void	free_all(t_prompt *p)
@@ -73,5 +71,8 @@ void	exit_shell(t_prompt *data, int nb)
 	rl_clear_history();
 	if (data)
 		free_all(data);
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
 	exit(nb);
 }

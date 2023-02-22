@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/20 10:39:33 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/20 13:53:36 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,12 @@ void    open_file(t_prompt *p, t_list_tokens *e_tokens)
                 close(p->outfile); 
             p->outfile = open(tmp->next->str, O_CREAT | O_RDWR | O_TRUNC, 0777);
         }
+        if (p->infile == -1)
+            printf("%s: No such file or directory\n", tmp->next->str);
+        if (p->outfile == -1)
+            printf("%s: Permission denied\n", tmp->next->str);
         tmp = tmp->next;
     }
-    if (p->infile == -1)
-        printf("%s: No such file or directory", tmp->next->str);
-    if (p->outfile == -1)
-        printf("%s: Permission denied", tmp->next->str);
     printf("index = %d  infile = %d  outfile = %d\n", e_tokens->index, p->infile, p->outfile);
 }
 
@@ -134,7 +134,8 @@ int start_execute(t_prompt *p)
     while (curr)
     {
         open_file(p, curr);
-        ret = execute_cmd(p, curr);
+        if (p->infile != -1 && p->outfile != -1)
+            ret = execute_cmd(p, curr);
         // dprintf(2, "execute_cmd (1) = %d\n", ret);
         while (curr->type != PIPE && curr->type != END)
             curr = curr->next;
