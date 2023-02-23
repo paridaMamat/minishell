@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 23:17:00 by parida            #+#    #+#             */
-/*   Updated: 2023/02/22 12:42:15 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/23 13:53:48 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,14 @@ void    close_pipe(t_prompt *p)
 		close(p->infile);
 	if (p->outfile != -2)
 		close(p->outfile);
+}
+
+int	close_free_pipe(t_prompt *p)
+{
+	close_pipe(p);
+	if (p->nbr_pipe != 0)
+		ft_free_fd(p);
+	return (0);
 }
 
 int	is_built(char *str)

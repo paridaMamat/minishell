@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/20 13:53:36 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/23 18:15:34 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,7 @@ int start_execute(t_prompt *p)
         close_free_pipe(p);
     while (i != -1 || errno != ECHILD)
         i = waitpid(-1, NULL, 0);
+    //setup_signal_handlers();
     // dprintf(2, "execute_cmd (2) = %d\n", ret);
     return (ret);
 }

@@ -6,13 +6,13 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:41:53 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/22 15:24:06 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/23 12:16:40 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int minishell_env(t_prompt *p, t_list_tokens *e_tokens)
+int minishell_env(t_prompt *p, t_list_tokens *e_tokens, int fd)
 {
 	int	i;
 
@@ -22,6 +22,6 @@ int minishell_env(t_prompt *p, t_list_tokens *e_tokens)
 	if (!p->env)
 		return (1);
 	while (p->env[i])
-		ft_putendl_fd(p->env[i++], STDOUT_FILENO);
+		ft_putendl_fd(p->env[i++], fd);
 	return (0);
 }

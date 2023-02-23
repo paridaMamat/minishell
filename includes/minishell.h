@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/22 15:11:57 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/23 13:54:08 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,6 +233,7 @@ void			free_all(t_prompt *p);
 	close all pipe
 */
 void			close_pipe(t_prompt *p);
+int				close_free_pipe(t_prompt *p);
 
 /**
 	is this a function of builtings
@@ -249,9 +250,9 @@ void			print_structs_debug(t_prompt **p, int with_env);
 
 /*------------------------------ BUILTINS ------------------------------------*/
 
-int			minishell_echo(t_prompt *p, t_list_tokens *e_tokens);
+int			minishell_echo(t_prompt *p, t_list_tokens *e_tokens, int fd);
 //int		minishell_pwd(t_prompt *data);
-int			minishell_env(t_prompt *p, t_list_tokens *e_tokens);
+int			minishell_env(t_prompt *p, t_list_tokens *e_tokens, int fd);
 //int		minishell_cd(t_prompt *data);
 //int		minishell_unset(t_prompt *data, char **args);
 //int 		minishell_exit(t_prompt *data, char **args);
@@ -286,7 +287,6 @@ char			**create_cmd_arg(t_list_tokens *e_tokens);
    execute 
  */
 int				child_process(t_prompt *p, t_list_tokens *e_tokens);
-int				close_free_pipe(t_prompt *p);
 int				execute_cmd(t_prompt *p, t_list_tokens *e_tokens);
 int				execute(t_prompt *p, t_list_tokens *e_tokens);
 int				one_command(t_prompt *p, t_list_tokens *e_tokens);
@@ -297,7 +297,7 @@ int				one_command(t_prompt *p, t_list_tokens *e_tokens);
 /**
    execute one command
  */
-int				execute_one_built(t_prompt *p, t_list_tokens *e_tokens);
+int				execute_built(t_prompt *p, t_list_tokens *e_tokens);
 int				execute_one_sys(t_prompt *p, t_list_tokens *e_tokens);
 /*----------------------------- END  EXECUTE_ONE_CMD  -------------------------*/
 

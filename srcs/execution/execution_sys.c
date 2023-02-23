@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:41:00 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/22 13:01:43 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/23 18:55:20 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,13 @@ char	**get_path(t_pipex *pipex, char **envp)
 	if (*envp == NULL || envp == NULL || envp[0][0] == 0)
 	{
 		free(pipex->cmd_arg);
-		printf("PATH is empty\n");
+		printf("env is empty\n");
         return (0);
 	}
 	while (ft_strncmp("PATH=", *envp, 5))
 		envp++;
+	if (envp == NULL)
+		return (printf("PATH is not found\n"), NULL);
 	path = *envp + 5;
 	return (ft_split(path, ':'));
 }
@@ -119,7 +121,10 @@ int	execute_sys(t_prompt *p, t_list_tokens *e_tokens)
 			{
 				perror("Command not found\n");
 				g_exit_code = CMD_NOT_EXECUTABLE;
-				return(0);
+				if (p->nbr_pipe != 0)
+					ft_free_fd(p);
+				exit_shell(p, g_exit_code);
+				//return(exit(0), 0);
 			}
 		}
 		e_tokens = e_tokens->next;
