@@ -6,7 +6,7 @@
 #    By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/16 11:46:30 by mflores-          #+#    #+#              #
-#    Updated: 2023/02/22 15:12:31 by pmaimait         ###   ########.fr        #
+#    Updated: 2023/02/24 11:12:22 by pmaimait         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,7 +55,7 @@ SIGNALS_FILES = signal
 SIGNALS_FOLDER = signals/
 UTILS_FILES = utils utils2 utils3
 UTILS_FOLDER = utils/
-BUILTINS_FILES = echo_builtin env_builtin
+BUILTINS_FILES = echo_builtin env_builtin export_builtin
 BUILTINS_FOLDER = builtins/
 DEBUG_FILES = structures
 DEBUG_FOLDER = debug/

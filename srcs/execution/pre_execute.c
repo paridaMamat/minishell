@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/24 10:31:08 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/24 15:06:57 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,9 @@ void    open_file(t_prompt *p, t_list_tokens *e_tokens)
             p->outfile = open(tmp->next->str, O_CREAT | O_RDWR | O_TRUNC, 0777);
         }
         if (p->infile == -1)
-            printf("%s: No such file or directory\n", tmp->next->str);
+            perror("infile");
         if (p->outfile == -1)
-            printf("%s: Permission denied\n", tmp->next->str);
+            perror("outfile");
         tmp = tmp->next;
     }
     printf("index = %d  infile = %d  outfile = %d\n", e_tokens->index, p->infile, p->outfile);
