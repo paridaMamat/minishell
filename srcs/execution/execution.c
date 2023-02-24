@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 15:12:22 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/23 18:58:15 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/24 10:27:17 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ int	one_command(t_prompt *p, t_list_tokens *e_tokens)
     ret = CMD_NOT_FOUND;
     while (e_tokens->next && e_tokens->type != STRING)
 		e_tokens = e_tokens->next;
-	if (e_tokens->type == END)
-		return (0);
+	if (e_tokens->type == END)	
+		return (close_pipe(p), 0);
 	else if (is_built(e_tokens->str) == 1)
 		ret = execute_built(p, e_tokens);
 	else
