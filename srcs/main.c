@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 01:56:18 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/23 18:19:45 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/03 08:41:33 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static void	check_line(t_prompt *p)
 		g_exit_code = parse_line(p);
 		if (g_exit_code == 0)
 		{
-			// print_structs_debug(&p, 0);
+			print_structs_debug(&p, 0);
 			g_exit_code = init_data(p);
 			if (g_exit_code == 0)
 				start_execute(p);
@@ -54,9 +54,6 @@ static void	check_line(t_prompt *p)
 
 static void	start_minishell(t_prompt *p)
 {
-	int	old_stdin;
-
-	old_stdin = 0;
 	while (1)
 	{
 		setup_signal_handlers();

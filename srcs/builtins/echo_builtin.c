@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo_builtin.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:02:44 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/23 13:13:33 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/27 22:49:48 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,8 @@ int	minishell_echo(t_prompt *p, t_list_tokens *e_tokens, int fd)
 	int							i;
 	int							n_flag;
 	t_list_tokens				*tmp;
-	int							flag;
 
-	//(void)p;
-	flag = 0;
-	if (p->outfile != -2)
-		flag = 1;
+	(void)p;
 	n_flag = 0;
 	tmp = e_tokens;
 	i = 0;

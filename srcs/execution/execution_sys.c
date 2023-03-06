@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_sys.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:41:00 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/24 14:50:43 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/02/27 22:46:29 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,9 +94,7 @@ int	execute_sys(t_prompt *p, t_list_tokens *e_tokens)
 {
 	int	result;
 	t_pipex		*pipex;
-	int	i;
 
-	i = 0;
 	pipex = p->pipex;
 	while (e_tokens->type != PIPE && e_tokens->type != END)
 	{

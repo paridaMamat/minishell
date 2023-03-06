@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset_builtin.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:48:39 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/24 14:28:22 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/06 14:55:37 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,24 +44,27 @@ int	minishell_unset(t_prompt *p, t_list_tokens *e_tokens)
 {
 	int	i;
 	int	index;
-	int	res;
+	char	**tmp;
 
-	res = 0;
-	i = 1;
-	while (p->env[i])
+	while (e_tokens->type != END && e_tokens->type != PIPE)
 	{
-		if (!is_valid_env_var_key(p->env[i]) || ft_strchr(p->env[i], '=') != NULL)
+		i = 0;
+		index = check_in_env(p, e_tokens->str);
+		tmp = (char **)malloc(sizeof(char *) * ft_matrixlen(p->env));
+		if (!tmp)
+			return (write(2, "malloc error\n", 14), exit(1));
+		while (p->env[i] && index > -1)
 		{
-            ft_putstr_fd("minishell: unset: not a valid identifier", STDOUT_FILENO);
-			res = 1;
+			if (i < index)
+				tmp[i] = p->env[i];
+			else if (i > index)
+				tmp[i - 1] = p->env[i];
+			i++;
 		}
-		else
-		{
-			index = get_env_var_index(p->env, p->env[i]);
-			if (index != -1)
-				remove_env_var(p, index);
-		}
-		i++;
+		ft_free_matrix(p->env);
+		p->env = tmp;
+		ft_free_matrix(tmp);
+		e_tokens = e_tokens->next;
 	}
-	return (res);
+	return (0);
 }

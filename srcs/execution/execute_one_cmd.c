@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_one_cmd.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 12:23:08 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/23 18:58:42 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/06 14:46:05 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,16 @@ int execute_built(t_prompt *p, t_list_tokens *e_tokens)
 		fd = STDOUT_FILENO;	
     if (ft_strncmp(e_tokens->str, "echo", 5) == 0)
         ret = minishell_echo(p, e_tokens->next, fd);
-    // if (ft_strncmp(e_tokens->str, "cd", 3) == 0)
+    //else if (ft_strncmp(e_tokens->str, "cd", 3) == 0)
 	// 	ret = execute_cd(p, e_tokens);
 	else if (ft_strncmp(e_tokens->str, "env", 4) == 0)
 		ret = minishell_env(p, e_tokens->next, fd);
-	// else if (ft_strncmp(e_tokens->str, "export", 7) == 0)
-	// 	ret = execute_export(p, e_tokens);
+	else if (ft_strncmp(e_tokens->str, "export", 7) == 0)
+		ret = execute_export(p, e_tokens->next, fd);
 	// else if (ft_strncmp(e_tokens->str, "pwd", 4) == 0)
 	// 	ret = execute_pwd(p, e_tokens);
-	// else if (ft_strncmp(e_tokens->str, "unset", 6) == 0)
-	// 	ret = execute_unset(p, e_tokens);
+	else if (ft_strncmp(e_tokens->str, "unset", 6) == 0)
+		ret = execute_unset(p, e_tokens->next);
 	// else if (ft_strncmp(e_tokens->str, "exit", 5) == 0)
 	// 	ret = execute_exit(p, e_tokens);
 	if (p->outfile != -2)
