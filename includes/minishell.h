@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/24 11:29:30 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/07 21:33:15 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,8 +254,9 @@ int			minishell_echo(t_prompt *p, t_list_tokens *e_tokens, int fd);
 //int		minishell_pwd(t_prompt *data);
 int			minishell_env(t_prompt *p, t_list_tokens *e_tokens, int fd);
 //int		minishell_cd(t_prompt *data);
-//int		minishell_unset(t_prompt *data, char **args);
+int			minishell_unset(t_prompt *p, t_list_tokens *e_tokens);
 //int 		minishell_exit(t_prompt *data, char **args);
+int			minishell_export(t_prompt *p, t_list_tokens *e_tokens, int fd);
 
 /*---------------------------- END BUILTINS ----------------------------------*/
 
@@ -301,5 +302,9 @@ int				execute_built(t_prompt *p, t_list_tokens *e_tokens);
 int				execute_one_sys(t_prompt *p, t_list_tokens *e_tokens);
 /*----------------------------- END  EXECUTE_ONE_CMD  -------------------------*/
 
-
+int				check_in_env(t_prompt *p, char *str);
+int				print_export(t_prompt *p, int fd);
+int				export_arg(t_prompt *p, t_list_tokens *e_tokens, int fd);
+int				add_or_replace_env(t_prompt *p, char *line, char *str);
+int		ft_matrixlen(char **m);
 #endif

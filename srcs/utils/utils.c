@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 15:07:26 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/17 11:51:40 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/08 19:07:25 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	ft_matrixlen(char **m)
+int	ft_matrixlen(char **m)
 {
 	int	i;
 
@@ -27,7 +27,7 @@ void	ft_free_matrix(char **m)
 	int	i;
 
 	i = 0;
-	while (m && m[i])
+	while (m[i])
 	{
 		free(m[i]);
 		i++;

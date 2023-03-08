@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pre_execute.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/24 15:06:57 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/07 21:39:56 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void    open_file(t_prompt *p, t_list_tokens *e_tokens)
             perror("outfile");
         tmp = tmp->next;
     }
-    printf("index = %d  infile = %d  outfile = %d\n", e_tokens->index, p->infile, p->outfile);
+    //printf("index = %d  infile = %d  outfile = %d\n", e_tokens->index, p->infile, p->outfile);
 }
 
 int     count_pipe(t_prompt *p)
@@ -136,7 +136,6 @@ int start_execute(t_prompt *p)
         open_file(p, curr);
         if (p->infile != -1 && p->outfile != -1)
             ret = execute_cmd(p, curr);
-        // dprintf(2, "execute_cmd (1) = %d\n", ret);
         while (curr->type != PIPE && curr->type != END)
             curr = curr->next;
         curr = curr->next;  
@@ -145,7 +144,5 @@ int start_execute(t_prompt *p)
         close_free_pipe(p);
     while (i != -1 || errno != ECHILD)
         i = waitpid(-1, NULL, 0);
-    //setup_signal_handlers();
-    // dprintf(2, "execute_cmd (2) = %d\n", ret);
     return (ret);
 }

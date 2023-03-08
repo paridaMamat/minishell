@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 15:12:22 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/24 10:27:17 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/07 21:37:36 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ int	child_process(t_prompt *p, t_list_tokens *e_tokens)
 		close_pipe(p);
 		ret = execute_sys(p, tmp);
 	}
-	// dprintf(2, "return of child process = %d\n", ret);
 	return (ret);
 }
 
@@ -95,6 +94,5 @@ int	execute_cmd(t_prompt *p, t_list_tokens *e_tokens)
 		if (pipex->pid == 0)
 			ret = child_process(p, e_tokens);
 	}
-	// dprintf(2, "return value of execute_cmd = %d\n", ret);
 	return (ret);
 }

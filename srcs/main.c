@@ -6,7 +6,7 @@
 /*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 01:56:18 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/03 08:41:33 by parida           ###   ########.fr       */
+/*   Updated: 2023/03/07 21:37:11 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,10 @@ static void	check_line(t_prompt *p)
 		g_exit_code = parse_line(p);
 		if (g_exit_code == 0)
 		{
-			print_structs_debug(&p, 0);
+			//print_structs_debug(&p, 0);
 			g_exit_code = init_data(p);
 			if (g_exit_code == 0)
 				start_execute(p);
-			// dprintf(2, "start_execute = %d\n", ret);
 		}
 	}
 	free_line(p);

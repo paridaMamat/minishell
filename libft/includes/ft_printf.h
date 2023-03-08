@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_printf.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 22:48:31 by mflores-          #+#    #+#             */
-/*   Updated: 2023/01/25 13:55:12 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/03/07 16:21:38 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,5 +59,6 @@ int		ft_printnbr(int nbr);
 int		ft_printbase_u(unsigned int nbr, int base, const char *hexa);
 int		ft_printptr_u(unsigned long nbr, int base, const char *hexa);
 int		ft_putptr_u(unsigned long nbr, int base, const char *hexa);
+
 
 #endif
