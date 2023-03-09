@@ -6,7 +6,7 @@
 /*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 09:21:00 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/08 11:51:00 by parida           ###   ########.fr       */
+/*   Updated: 2023/03/09 11:48:25 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,18 +69,47 @@ int export_arg(t_prompt *p, t_list_tokens *e_tokens, int fd)
             {
                 ft_putstr_fd("bash: export :'", fd);
                 ft_putstr_fd(arg, fd);
-                ft_putstr_fd("' not a valide identifier", fd);
-            } 
-            printf("str = %s\n", str);   
+                ft_putendl_fd("' not a valide identifier", fd);
+                return (1);
+            }   
             if (check_in_env(p, str) == -1)
-                ft_extend_matrix(p->env, arg);
+                p->env = ft_extend_matrix(p->env, arg);
             else if (check_in_env(p, str) > -1)
+            {
                 add_or_replace_env(p, arg, str);
+            }
+            free(str);
             i++;
 		}
 		e_tokens = e_tokens->next;
 	}
 	return (0);
+}
+
+static char	*ft_strjoin_free(char *s1, char *s2)
+{
+	char	*new_str;
+	size_t	len_s1_s2;
+	size_t	i;
+	size_t	x;
+
+	if (!s1 || !s2)
+		return (NULL);
+	len_s1_s2 = ft_strlen(s1) + ft_strlen(s2) + 1;
+	new_str = malloc(sizeof(char) * len_s1_s2);
+	if (!new_str)
+		return (NULL);
+	i = 0;
+	x = 0;
+	while (s1[i])
+		new_str[x++] = s1[i++];
+	i = 0;
+	while (s2[i])
+		new_str[x++] = s2[i++];
+	new_str[x] = 0;
+    free(s1);
+    free(s2);
+	return (new_str);
 }
 
 int add_or_replace_env(t_prompt *p, char *line, char *str)
@@ -93,11 +122,11 @@ int add_or_replace_env(t_prompt *p, char *line, char *str)
     while (line[i] && (ft_isalnum(line[i]) || line[i] == '_'))
 		i++;
     if (line[i] == '=')
-        p->env[index] = line;
+        p->env[index] = ft_strdup(line);
     if (line[i] == '+' && line[i + 1] == '=')
     {
         str = ft_substr(line, (i+2), ft_strlen(line));
-        p->env[i] = ft_strjoin(p->env[i], str);
+        p->env[index] = ft_strjoin_free(p->env[index], str);
     }
     return (0);         
 }

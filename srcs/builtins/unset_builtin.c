@@ -6,7 +6,7 @@
 /*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:48:39 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/08 19:00:14 by parida           ###   ########.fr       */
+/*   Updated: 2023/03/09 11:29:26 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	check_in_env(t_prompt *p, char *str)
 			index = i;
 		i++;
 	}
-	printf("index = %d\n", index);
+	//printf("index = %d\n", index);
 	return (index);
 }
 
@@ -53,14 +53,14 @@ int	minishell_unset(t_prompt *p, t_list_tokens *e_tokens)
 			while (p->env[i] && index > -1)
 			{
 				if (i < index)
-					tmp[i] = p->env[i];
+					tmp[i] = ft_strdup(p->env[i]);
 				else if (i > index)
-					tmp[i - 1] = p->env[i];
+					tmp[i - 1] = ft_strdup(p->env[i]);
 				i++;
 			}
-			tmp[i - 1] = NULL;
+			tmp[i - 1] = 0;
 			ft_free_matrix(p->env);
-			p->env = tmp;
+			p->env = ft_dup_matrix(tmp);
 			ft_free_matrix(tmp);
 		}
 		e_tokens = e_tokens->next;

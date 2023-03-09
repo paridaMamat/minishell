@@ -6,7 +6,7 @@
 /*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 15:07:26 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/08 19:07:25 by parida           ###   ########.fr       */
+/*   Updated: 2023/03/09 10:57:42 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	ft_free_matrix(char **m)
 	int	i;
 
 	i = 0;
-	while (m[i])
+	while (m && m[i])
 	{
 		free(m[i]);
 		i++;
