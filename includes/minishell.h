@@ -6,7 +6,7 @@
 /*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/07 21:33:15 by parida           ###   ########.fr       */
+/*   Updated: 2023/03/10 20:53:34 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,9 @@ end-of-file: (wanted `"
 # define CMD_NOT_FOUND 127
 # define CMD_NOT_EXECUTABLE 126
 # define ERR_NOT_ASKED "Not asked in the mandatory part of minishell"
+# define ERR_EXIT "minishell: exit: "
+# define ERR_EXIT_MSG1 ": numeric argument required"
+# define ERR_EXIT_MSG2 "too many arguments"
 
 /* Colors */
 # define DEFAULT "\001\e[00;39m\002"
@@ -251,11 +254,11 @@ void			print_structs_debug(t_prompt **p, int with_env);
 /*------------------------------ BUILTINS ------------------------------------*/
 
 int			minishell_echo(t_prompt *p, t_list_tokens *e_tokens, int fd);
-//int		minishell_pwd(t_prompt *data);
+int			minishell_pwd(t_prompt *p, t_list_tokens *e_tokens, int fd);
 int			minishell_env(t_prompt *p, t_list_tokens *e_tokens, int fd);
-//int		minishell_cd(t_prompt *data);
+int			minishell_cd(t_prompt *data);
 int			minishell_unset(t_prompt *p, t_list_tokens *e_tokens);
-//int 		minishell_exit(t_prompt *data, char **args);
+int			minishell_exit(t_prompt *p, t_list_tokens *e_tokens, int fd);
 int			minishell_export(t_prompt *p, t_list_tokens *e_tokens, int fd);
 
 /*---------------------------- END BUILTINS ----------------------------------*/
@@ -306,5 +309,5 @@ int				check_in_env(t_prompt *p, char *str);
 int				print_export(t_prompt *p, int fd);
 int				export_arg(t_prompt *p, t_list_tokens *e_tokens, int fd);
 int				add_or_replace_env(t_prompt *p, char *line, char *str);
-int		ft_matrixlen(char **m);
+int				ft_matrixlen(char **m);
 #endif

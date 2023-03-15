@@ -6,7 +6,7 @@
 /*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:41:00 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/02/27 22:46:29 by parida           ###   ########.fr       */
+/*   Updated: 2023/03/13 14:13:58 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,9 @@ char	**get_path(t_pipex *pipex, char **envp)
 		printf("env is empty\n");
         return (0);
 	}
-	while (ft_strncmp("PATH=", *envp, 5))
+	while (*envp && ft_strncmp("PATH=", *envp, 5))
 		envp++;
-	if (envp == NULL)
+	if (*envp == NULL)
 		return (printf("PATH is not found\n"), NULL);
 	path = *envp + 5;
 	return (ft_split(path, ':'));
@@ -106,6 +106,11 @@ int	execute_sys(t_prompt *p, t_list_tokens *e_tokens)
 			else
 			{
 				pipex->path = get_path(pipex, p->env);
+				if (pipex->path == NULL)
+				{
+					ft_free_matrix(pipex->cmd_arg);
+					exit_shell(p, g_exit_code);
+				}
 				pipex->cmd = get_cmd(pipex->path, e_tokens->str);
 				ft_free_matrix(pipex->path);
 				if (pipex->cmd != NULL)

@@ -6,7 +6,7 @@
 /*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:48:39 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/09 11:29:26 by parida           ###   ########.fr       */
+/*   Updated: 2023/03/10 16:20:21 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,21 +47,24 @@ int	minishell_unset(t_prompt *p, t_list_tokens *e_tokens)
 		if (e_tokens->type == STRING)
 		{
 			index = check_in_env(p, e_tokens->str);
-			tmp = (char **)malloc(sizeof(char *) * ft_matrixlen(p->env));
-			if (!tmp)
-				return (write(2, "malloc error\n", 14), 1);
-			while (p->env[i] && index > -1)
+			if (index > -1)
 			{
-				if (i < index)
-					tmp[i] = ft_strdup(p->env[i]);
-				else if (i > index)
-					tmp[i - 1] = ft_strdup(p->env[i]);
-				i++;
+				tmp = (char **)malloc(sizeof(char *) * ft_matrixlen(p->env));
+				if (!tmp)
+					return (write(2, "malloc error\n", 14), 1);
+				while (p->env[i] && index > -1)
+				{
+					if (i < index)
+						tmp[i] = ft_strdup(p->env[i]);
+					else if (i > index)
+						tmp[i - 1] = ft_strdup(p->env[i]);
+					i++;
+				}
+				tmp[i - 1] = 0;
+				ft_free_matrix(p->env);
+				p->env = ft_dup_matrix(tmp);
+				ft_free_matrix(tmp);	
 			}
-			tmp[i - 1] = 0;
-			ft_free_matrix(p->env);
-			p->env = ft_dup_matrix(tmp);
-			ft_free_matrix(tmp);
 		}
 		e_tokens = e_tokens->next;
 	}

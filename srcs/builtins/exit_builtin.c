@@ -6,7 +6,7 @@
 /*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 11:32:41 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/16 12:42:23 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/03/08 20:09:27 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ static int	get_exit_code(char *arg, int *flag)
 		*flag = 1;
 	while (arg[i])
 	{
-		if (!isdigit(arg[i]) && !ft_isspace(arg[i]))
+		if (!ft_isdigit(arg[i]) && !ft_isspace(arg[i]))
 			*flag = 1;
 		i++;
 	}
@@ -71,25 +71,29 @@ static int	get_exit_code(char *arg, int *flag)
 	return (i % 256);
 }
 
-int minishell_exit(t_prompt *data, char **args)
+int	minishell_exit(t_prompt *p, t_list_tokens *e_tokens, int fd)
 {
 	int		exit_code;
 	int		flag;
-    
+
+	(void)fd;
+	flag = 0;
 	ft_putendl_fd("exit", STDOUT_FILENO);
-	if (!args || !args[1])
+	if (e_tokens->type == END || e_tokens->type == PIPE)
 		exit_code = g_exit_code;
-	else
+	else if (e_tokens->type == STRING)
 	{
-		exit_code = get_exit_code(args[1], &flag);
+		exit_code = get_exit_code(e_tokens->str, &flag);
 		if (flag)
+		{
 			exit_code = 2;
-			ft_putendl_fd("minishell: exit: numeric argument required", \
-			STDERR_FILENO);
-		if (args[2])
-			return (ft_putendl_fd("minishell: exit: too many arguments", \
-			STDERR_FILENO), 2);
+			ft_putstr_fd(ERR_EXIT, STDERR_FILENO);
+			ft_putstr_fd(e_tokens->str, STDERR_FILENO);
+			ft_putendl_fd(ERR_EXIT_MSG1, STDERR_FILENO);
+		}
+		else if (e_tokens->next->type == STRING)
+			return (ft_putendl_fd(ERR_EXIT ERR_EXIT_MSG2, STDERR_FILENO), 1);
 	}
-	exit_shell(&data, exit_code);
+	exit_shell(p, exit_code);
 	return (2);
 }

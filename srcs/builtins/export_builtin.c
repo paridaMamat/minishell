@@ -6,7 +6,7 @@
 /*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 09:21:00 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/09 11:48:25 by parida           ###   ########.fr       */
+/*   Updated: 2023/03/10 18:25:22 by parida           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,27 @@ int print_export(t_prompt *p, int fd)
     return (0);
 }
 
+static char *make_arg(char *str)
+{
+    char    *tmp;
+    int i;
+    int j;
+    
+    i = 0;
+    j = 0;
+    tmp = (char *)malloc(sizeof(char) * ft_strlen(str));
+    if (!tmp)
+        return (NULL);
+    while (str[i])
+    {
+        if (str[i] == '+' && str[i + 1] == '=')
+            i++;
+        tmp[j++] = str[i++]; 
+    }
+    tmp[j] = '\0';
+    return (tmp);
+}
+
 int export_arg(t_prompt *p, t_list_tokens *e_tokens, int fd)
 {
     char    *str;
@@ -63,23 +84,32 @@ int export_arg(t_prompt *p, t_list_tokens *e_tokens, int fd)
             arg = e_tokens->str;
             while (arg[i] && (ft_isalpha(arg[i]) || ft_isalnum(arg[i]) || arg[i] == '_'))
 		        i++;
-            if (arg[i] == '=' || (arg[i] == '+' && arg[i + 1] == '='))
+            if (i != 0 && (arg[i] == '=' || (arg[i] == '+' && arg[i + 1] == '=')))
+            {
                 str = ft_substr(arg, 0, i);
-            else //if (arg[0] == '=')
+              
+                if (check_in_env(p, str) == -1)
+                {
+                    if (arg[i] == '+')
+                    {
+                       arg = make_arg(arg);
+                       p->env = ft_extend_matrix(p->env, arg);
+                       free(arg);   
+                    }
+                    else
+                        p->env = ft_extend_matrix(p->env, arg);
+                } 
+                else if (check_in_env(p, str) > -1)
+                    add_or_replace_env(p, arg, str);
+                free(str);
+                i++;
+            }
+            else if (arg[i])
             {
                 ft_putstr_fd("bash: export :'", fd);
                 ft_putstr_fd(arg, fd);
                 ft_putendl_fd("' not a valide identifier", fd);
-                return (1);
             }   
-            if (check_in_env(p, str) == -1)
-                p->env = ft_extend_matrix(p->env, arg);
-            else if (check_in_env(p, str) > -1)
-            {
-                add_or_replace_env(p, arg, str);
-            }
-            free(str);
-            i++;
 		}
 		e_tokens = e_tokens->next;
 	}
