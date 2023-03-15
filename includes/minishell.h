@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/10 20:53:34 by parida           ###   ########.fr       */
+/*   Updated: 2023/03/15 11:54:32 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 # include <readline/history.h>
 # include <signal.h>
 # include <sys/wait.h>
+# include <sys/types.h>
 # include <sys/ioctl.h>
 # include <errno.h>
 
@@ -62,6 +63,9 @@ end-of-file: (wanted `"
 # define ERR_EXIT "minishell: exit: "
 # define ERR_EXIT_MSG1 ": numeric argument required"
 # define ERR_EXIT_MSG2 "too many arguments"
+# define ERR_CD "minishell: cd: too many arguments"
+# define ERR_CD_MSG1 "minishell: cd: HOME not set"
+# define ERR_CD_MSG2 "minishell: cd: OLDPWD not set"
 
 /* Colors */
 # define DEFAULT "\001\e[00;39m\002"
@@ -256,7 +260,7 @@ void			print_structs_debug(t_prompt **p, int with_env);
 int			minishell_echo(t_prompt *p, t_list_tokens *e_tokens, int fd);
 int			minishell_pwd(t_prompt *p, t_list_tokens *e_tokens, int fd);
 int			minishell_env(t_prompt *p, t_list_tokens *e_tokens, int fd);
-int			minishell_cd(t_prompt *data);
+int			minishell_cd(t_prompt *p, t_list_tokens *e_tokens, int fd);
 int			minishell_unset(t_prompt *p, t_list_tokens *e_tokens);
 int			minishell_exit(t_prompt *p, t_list_tokens *e_tokens, int fd);
 int			minishell_export(t_prompt *p, t_list_tokens *e_tokens, int fd);

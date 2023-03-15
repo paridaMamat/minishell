@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 12:11:10 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/17 21:09:56 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/03/15 15:42:14 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ int h_nb, int *ret)
 	old_stdin = dup(STDIN_FILENO);
 	if (!infile)
 		return (0);
+	g_exit_code = 0;
 	line = readline(PROMPT_S2);
 	while (g_exit_code != 130 && evaluate_line(delimiter, &line, ret))
 	{
@@ -99,7 +100,10 @@ int h_nb, int *ret)
 	free_ptr(line);
 	close(tmp_fd);
 	if (g_exit_code == 130)
+	{
+		printf("g_exit_code: %d\n", g_exit_code);
 		return (0);
+	}
 	return (*ret);
 }
 
@@ -122,8 +126,10 @@ int	continue_checks(t_prompt *p, int flag, int *ret)
 		if (curr->type == HEREDOC && (curr->next->type == H_DELIMITER_QUOTES
 				|| curr->next->type == H_DELIMITER))
 		{
-			if (!fill_heredoc(curr, curr->next, heredoc_nb, ret))
+			if (fill_heredoc(curr, curr->next, heredoc_nb, ret) == 0)
 				return (0);
+			else if (fill_heredoc(curr, curr->next, heredoc_nb, ret) == 130)
+				return (g_exit_code);
 			heredoc_nb++;
 		}
 		curr = curr->next;

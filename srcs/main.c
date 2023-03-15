@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 01:56:18 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/10 10:34:51 by parida           ###   ########.fr       */
+/*   Updated: 2023/03/15 10:37:53 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static int	check_args(int ac)
 */
 static void	check_line(t_prompt *p)
 {
-	if (!p->line || ft_strncmp(p->line, "exit", 5) == 0)
+	if (!p->line)
 	{
 		ft_putendl_fd(MSG_EXIT, STDOUT_FILENO);
 		exit_shell(p, g_exit_code);

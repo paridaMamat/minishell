@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 12:13:25 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/17 21:41:46 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/03/15 15:46:25 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,5 +112,7 @@ int	parse_line(t_prompt *p)
 	}
 	if (!continue_checks(p, err, &ret))
 		return (2);
+	else if (continue_checks(p, err, &ret) == 130)
+		return (g_exit_code);
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit_builtin.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 11:32:41 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/08 20:09:27 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/03/15 15:17:45 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ int	minishell_exit(t_prompt *p, t_list_tokens *e_tokens, int fd)
 
 	(void)fd;
 	flag = 0;
-	ft_putendl_fd("exit", STDOUT_FILENO);
+	exit_code = 0;
 	if (e_tokens->type == END || e_tokens->type == PIPE)
 		exit_code = g_exit_code;
 	else if (e_tokens->type == STRING)
@@ -92,7 +92,22 @@ int	minishell_exit(t_prompt *p, t_list_tokens *e_tokens, int fd)
 			ft_putendl_fd(ERR_EXIT_MSG1, STDERR_FILENO);
 		}
 		else if (e_tokens->next->type == STRING)
+		{
+			g_exit_code = 1;
 			return (ft_putendl_fd(ERR_EXIT ERR_EXIT_MSG2, STDERR_FILENO), 1);
+		}
+	}
+	g_exit_code = exit_code;
+	ft_putendl_fd("exit", STDOUT_FILENO);
+	printf("exit_code is: %d\ng_exit_code is: %d\n", exit_code, g_exit_code);
+	if (p->outfile != -2)
+		close(p->outfile);
+	if (e_tokens->index < p->nbr_pipe)
+		close(p->pipex->fd[e_tokens->index][1]);
+	if (p->nbr_pipe != 0)
+	{
+		close_free_pipe(p);
+		exit_shell(p, g_exit_code);
 	}
 	exit_shell(p, exit_code);
 	return (2);

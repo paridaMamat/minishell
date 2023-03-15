@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_sys.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:41:00 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/13 14:13:58 by parida           ###   ########.fr       */
+/*   Updated: 2023/03/15 14:31:42 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ char	**get_path(t_pipex *pipex, char **envp)
 	{
 		free(pipex->cmd_arg);
 		printf("env is empty\n");
-        return (0);
+		return (0);
 	}
 	while (*envp && ft_strncmp("PATH=", *envp, 5))
 		envp++;
@@ -60,11 +60,11 @@ char	**get_path(t_pipex *pipex, char **envp)
 
 char	**create_cmd_arg(t_list_tokens *e_tokens)
 {
-	char	**array;
-	int		i;
-	int		count;
+	char			**array;
+	int				i;
+	int				count;
 	t_list_tokens	*tmp;
-	
+
 	tmp = e_tokens;
 	i = 0;
 	count = 0;
@@ -74,7 +74,7 @@ char	**create_cmd_arg(t_list_tokens *e_tokens)
 		count++;
 	}
 	array = (char **)malloc(sizeof(char *) * (count + 2));
-	if (array == NULL) 
+	if (array == NULL)
 		return (perror("malloc"), NULL);
 	tmp = e_tokens;
 	while (tmp->type != PIPE && tmp->type != END)
@@ -92,7 +92,7 @@ char	**create_cmd_arg(t_list_tokens *e_tokens)
 
 int	execute_sys(t_prompt *p, t_list_tokens *e_tokens)
 {
-	int	result;
+	int			result;
 	t_pipex		*pipex;
 
 	pipex = p->pipex;
@@ -113,21 +113,25 @@ int	execute_sys(t_prompt *p, t_list_tokens *e_tokens)
 				}
 				pipex->cmd = get_cmd(pipex->path, e_tokens->str);
 				ft_free_matrix(pipex->path);
-				if (pipex->cmd != NULL)
+				if (pipex->cmd != NULL){
 					result = execve(pipex->cmd, pipex->cmd_arg, p->env);
+					ft_putstr_fd("TEST RESULT =", 2);
+					ft_putstr_fd(ft_itoa(result), 2);
+					ft_putstr_fd("\n", 2);
+					}
 				else
 					result = -1;
 				free(pipex->cmd);
 			}
-			ft_free_matrix(pipex->cmd_arg);	
+			ft_free_matrix(pipex->cmd_arg);
 			if (result == -1)
 			{
-				perror("Command not found\n");
-				g_exit_code = CMD_NOT_EXECUTABLE;
+				ft_putstr_fd(e_tokens->str, STDERR_FILENO);
+				ft_putendl_fd(": command not found", STDERR_FILENO);
+				g_exit_code = 127;
 				if (p->nbr_pipe != 0)
 					ft_free_fd(p);
 				exit_shell(p, g_exit_code);
-				//return(exit(0), 0);
 			}
 		}
 		e_tokens = e_tokens->next;

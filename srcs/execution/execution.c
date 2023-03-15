@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 15:12:22 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/10 15:23:54 by parida           ###   ########.fr       */
+/*   Updated: 2023/03/15 14:16:43 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +14,33 @@
 
 int	one_command(t_prompt *p, t_list_tokens *e_tokens)
 {
-	int ret;
-    
-    ret = CMD_NOT_FOUND;
-    while (e_tokens->next && e_tokens->type != STRING)
+	int	ret;
+
+	ret = CMD_NOT_FOUND;
+	while (e_tokens->next && e_tokens->type != STRING)
 		e_tokens = e_tokens->next;
-	if (e_tokens->type == END)	
+	if (e_tokens->type == END)
 		return (close_pipe(p), 0);
 	else if (is_built(e_tokens->str) == 1)
 		ret = execute_built(p, e_tokens);
 	else
 		ret = execute_one_sys(p, e_tokens);
+	printf("return value for one commond is = %d\n", ret);
 	return (ret);
 }
 
-
 int	child_process(t_prompt *p, t_list_tokens *e_tokens)
 {
-	int		**fd;
-	int		index;
-	int		ret;
-    
-    fd = p->pipex->fd;
-	index = e_tokens->index;
+	int				**fd;
+	int				index;
+	int				ret;
 	t_list_tokens	*tmp;
-    
-    ret = CMD_NOT_FOUND;
+
+	fd = p->pipex->fd;
+	index = e_tokens->index;
+	ret = CMD_NOT_FOUND;
 	tmp = e_tokens;
- 	while (tmp->type != STRING && tmp->type != PIPE && tmp->type != END)
+	while (tmp->type != STRING && tmp->type != PIPE && tmp->type != END)
 		tmp = tmp->next;
 	if (tmp->type == END || tmp->type == PIPE)
 	{
@@ -50,7 +49,7 @@ int	child_process(t_prompt *p, t_list_tokens *e_tokens)
 	}
 	if (is_built(e_tokens->str) == 1)
 		ret = execute_built(p, e_tokens);
-    else 
+	else
 	{
 		if (p->infile != -2)
 			dup2(p->infile, STDIN_FILENO);
@@ -78,13 +77,11 @@ static void	sig_handler(int sig)
 
 int	execute_cmd(t_prompt *p, t_list_tokens *e_tokens)
 {
-    t_pipex *pipex;
-	int		ret;
-    
-	ret = 0;
-    pipex = p->pipex;
+	t_pipex	*pipex;
+	
+	pipex = p->pipex;
 	if (p->nbr_pipe == 0)
-        ret = one_command(p, e_tokens);
+		g_exit_code = one_command(p, e_tokens);
 	else
 	{
 		signal(SIGINT, &sig_handler);
@@ -92,7 +89,7 @@ int	execute_cmd(t_prompt *p, t_list_tokens *e_tokens)
 		if (pipex->pid == -1)
 			perror("fork error\n");
 		if (pipex->pid == 0)
-			ret = child_process(p, e_tokens);
+			g_exit_code = child_process(p, e_tokens);
 	}
-	return (ret);
+	return (g_exit_code);
 }
