@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/15 15:33:14 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/15 15:49:01 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,25 +128,20 @@ int	start_execute(t_prompt *p)
 	{
 		open_file(p, curr);
 		if (p->infile != -1 && p->outfile != -1)
-        {
 			g_exit_code = execute_cmd(p, curr);
-            printf("HERE: g_exit_code: %d\n", g_exit_code);
-        }
-        while (curr->type != PIPE && curr->type != END)
+		while (curr->type != PIPE && curr->type != END)
 			curr = curr->next;
 		curr = curr->next;
 	}
 	if (p->nbr_pipe != 0)
 		close_free_pipe(p);
-    i = waitpid(-1, &g_exit_code, 0);
 	while (i != -1 || errno != ECHILD)
 	{
 		i = waitpid(-1, &g_exit_code, 0);
 		if (WIFEXITED(g_exit_code))
 			g_exit_code = WEXITSTATUS(g_exit_code);
-		else if (WIFSIGNALED(g_exit_code))
+		if (WIFSIGNALED(g_exit_code))
 			g_exit_code = 128 + WTERMSIG(g_exit_code);
 	}
-    printf("HERE2: g_exit_code: %d\n", g_exit_code);
 	return (g_exit_code);
 }
