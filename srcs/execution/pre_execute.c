@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pre_execute.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/15 15:49:01 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/16 12:27:23 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ int	count_pipe(t_prompt *p)
 		tmp->index = i;
 		tmp = tmp->next;
 	}
-	printf("number of pipe is : %d\n", i);
 	return (i);
 }
 
@@ -117,31 +116,42 @@ int	init_data(t_prompt *p)
 	return (ret);
 }
 
-int	start_execute(t_prompt *p)
+int start_execute(t_prompt *p)
 {
-	t_list_tokens   *curr;
-	int		i;
-
-	curr = p->tokens;
-	i = 1;
-	while (curr)
-	{
-		open_file(p, curr);
-		if (p->infile != -1 && p->outfile != -1)
-			g_exit_code = execute_cmd(p, curr);
-		while (curr->type != PIPE && curr->type != END)
-			curr = curr->next;
-		curr = curr->next;
-	}
-	if (p->nbr_pipe != 0)
+    t_list_tokens   *curr;
+    pid_t    wpid;
+    int      save_status;
+	int		is_builtin;
+        
+    curr = p->tokens;
+    save_status = 0;
+    wpid = 0;
+	is_builtin = 0;
+    while (curr)
+    {
+        open_file(p, curr);
+        if (p->infile != -1 && p->outfile != -1)
+            save_status = execute_cmd(p, curr, &is_builtin);
+        while (curr->type != PIPE && curr->type != END)
+            curr = curr->next;
+        curr = curr->next;
+    }
+    if (p->nbr_pipe != 0)
 		close_free_pipe(p);
-	while (i != -1 || errno != ECHILD)
+	wpid = waitpid(-1, &g_exit_code, 0);
+	save_status = g_exit_code;
+	while (wpid != -1 || errno != ECHILD)
 	{
-		i = waitpid(-1, &g_exit_code, 0);
-		if (WIFEXITED(g_exit_code))
-			g_exit_code = WEXITSTATUS(g_exit_code);
-		if (WIFSIGNALED(g_exit_code))
-			g_exit_code = 128 + WTERMSIG(g_exit_code);
+		wpid = waitpid(-1, &g_exit_code, 0);
+		if (wpid == p->pipex->pid && p->nbr_pipe > 0)
+			save_status = g_exit_code;
 	}
-	return (g_exit_code);
+    if (WIFSIGNALED(save_status) && is_builtin == 0)
+        g_exit_code = 128 + WTERMSIG(save_status);
+    else if (WIFEXITED(save_status) && is_builtin == 0)
+        g_exit_code = WEXITSTATUS(save_status);
+    else if (is_builtin == 0)
+        g_exit_code = save_status;
+    return (g_exit_code);
 }
+

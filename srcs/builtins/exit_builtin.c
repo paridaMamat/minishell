@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit_builtin.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 11:32:41 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/15 15:17:45 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/16 12:29:00 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ int	minishell_exit(t_prompt *p, t_list_tokens *e_tokens, int fd)
 	}
 	g_exit_code = exit_code;
 	ft_putendl_fd("exit", STDOUT_FILENO);
-	printf("exit_code is: %d\ng_exit_code is: %d\n", exit_code, g_exit_code);
 	if (p->outfile != -2)
 		close(p->outfile);
 	if (e_tokens->index < p->nbr_pipe)

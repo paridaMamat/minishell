@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 15:12:22 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/15 14:16:43 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/16 12:27:49 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	one_command(t_prompt *p, t_list_tokens *e_tokens)
+int	one_command(t_prompt *p, t_list_tokens *e_tokens, int *is_builtin)
 {
 	int	ret;
 
@@ -22,14 +22,16 @@ int	one_command(t_prompt *p, t_list_tokens *e_tokens)
 	if (e_tokens->type == END)
 		return (close_pipe(p), 0);
 	else if (is_built(e_tokens->str) == 1)
+	{
+		*is_builtin = 1;
 		ret = execute_built(p, e_tokens);
+	}
 	else
 		ret = execute_one_sys(p, e_tokens);
-	printf("return value for one commond is = %d\n", ret);
 	return (ret);
 }
 
-int	child_process(t_prompt *p, t_list_tokens *e_tokens)
+int	child_process(t_prompt *p, t_list_tokens *e_tokens, int *is_builtin)
 {
 	int				**fd;
 	int				index;
@@ -48,7 +50,10 @@ int	child_process(t_prompt *p, t_list_tokens *e_tokens)
 		return (exit_shell(p, g_exit_code), 0);
 	}
 	if (is_built(e_tokens->str) == 1)
+	{
+		*is_builtin = 1;
 		ret = execute_built(p, e_tokens);
+	}
 	else
 	{
 		if (p->infile != -2)
@@ -75,13 +80,13 @@ static void	sig_handler(int sig)
 	}
 }
 
-int	execute_cmd(t_prompt *p, t_list_tokens *e_tokens)
+int	execute_cmd(t_prompt *p, t_list_tokens *e_tokens, int *is_builtin)
 {
 	t_pipex	*pipex;
 	
 	pipex = p->pipex;
 	if (p->nbr_pipe == 0)
-		g_exit_code = one_command(p, e_tokens);
+		g_exit_code = one_command(p, e_tokens, is_builtin);
 	else
 	{
 		signal(SIGINT, &sig_handler);
@@ -89,7 +94,7 @@ int	execute_cmd(t_prompt *p, t_list_tokens *e_tokens)
 		if (pipex->pid == -1)
 			perror("fork error\n");
 		if (pipex->pid == 0)
-			g_exit_code = child_process(p, e_tokens);
+			g_exit_code = child_process(p, e_tokens, is_builtin);
 	}
 	return (g_exit_code);
 }

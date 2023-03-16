@@ -3,14 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 01:56:18 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/15 10:37:53 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/16 12:34:51 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #include "minishell.h"
 
@@ -21,8 +19,6 @@ static int	check_args(int ac)
 	ft_putendl_fd(ERR_USAGE, STDERR_FILENO);
 	return (0);
 }
-
-
 
 /**
 	Checks line.
@@ -75,6 +71,11 @@ int	main(int ac, char **av, char **env)
 {
 	t_prompt		prompt;
 
+	if (isatty(STDIN_FILENO) == 0)
+    {
+		ft_putendl_fd(HELL_NO, STDERR_FILENO);
+		return (EXIT_SUCCESS);
+    }
 	if (!check_args(ac) || !init_prompt(&prompt, env))
 		exit_shell(NULL, EXIT_FAILURE);
 	(void)av;

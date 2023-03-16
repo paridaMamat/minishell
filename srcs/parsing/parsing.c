@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 12:13:25 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/15 15:46:25 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/16 13:40:10 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,5 @@ int	parse_line(t_prompt *p)
 	}
 	if (!continue_checks(p, err, &ret))
 		return (2);
-	else if (continue_checks(p, err, &ret) == 130)
-		return (g_exit_code);
 	return (0);
 }

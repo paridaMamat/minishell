@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/15 11:54:32 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/16 12:33:27 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@
 # define HEREDOC_NAME ".minishell_heredoc_"
 
 /* ERROR MESSAGES */
+# define HELL_NO "No way Jose, but nice try!"
 # define ERR_USAGE "Usage: ./minishell"
 # define ERR_MSG "Error: "
 # define ERR_MALLOC "Could not allocate memory.\n"
@@ -222,8 +223,15 @@ char			**ft_extend_matrix(char **in, char *newstr);
 */
 char			**ft_dup_matrix(char **m);
 
+/**
+	Frees pointer and sets it to NULL.
+*/
 void			free_ptr(void *thing);
 
+/**
+	Frees the prompt, the list of tokens and execution structure.
+	Returns a new prompt and waits for new input.
+*/
 void			free_line(t_prompt *p);
 
 /**
@@ -250,7 +258,17 @@ int				is_built(char *str);
 
 /*------------------------------- DEBUG --------------------------------------*/
 
+/**
+	FOR DEBUG PURPOSES ONLY
+	Prints the structure, with a specific name and specific color passed 
+	as parameters.
+*/
 void			print_list(t_list_tokens *list, char *name_struct, char *color);
+
+/**
+	FOR DEBUG PURPOSES ONLY
+	Prints the main structure of minishell, with or without the environment.
+*/
 void			print_structs_debug(t_prompt **p, int with_env);
 
 /*----------------------------- END DEBUG ------------------------------------*/
@@ -294,10 +312,10 @@ char			**create_cmd_arg(t_list_tokens *e_tokens);
 /**
    execute 
  */
-int				child_process(t_prompt *p, t_list_tokens *e_tokens);
-int				execute_cmd(t_prompt *p, t_list_tokens *e_tokens);
+int				child_process(t_prompt *p, t_list_tokens *e_tokens, int *is_builtin);
+int				execute_cmd(t_prompt *p, t_list_tokens *e_tokens, int *is_builtin);
 int				execute(t_prompt *p, t_list_tokens *e_tokens);
-int				one_command(t_prompt *p, t_list_tokens *e_tokens);
+int				one_command(t_prompt *p, t_list_tokens *e_tokens, int *is_builtin);
 
 /*----------------------------- END EXECUTION --------------------------------*/
 

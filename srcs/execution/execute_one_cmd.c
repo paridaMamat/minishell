@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_one_cmd.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 12:23:08 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/15 14:51:03 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/16 12:28:34 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ int	execute_built(t_prompt *p, t_list_tokens *e_tokens)
 		close_free_pipe(p);
 		exit_shell(p, g_exit_code);
 	}
-	printf("return value  is: %d\n", ret);
 	return (ret);
 }
 
@@ -87,6 +86,5 @@ int	execute_one_sys(t_prompt *p, t_list_tokens *e_tokens)
 		close(p->infile);
 	if (p->outfile != -2)
 		close(p->outfile);
-	printf("HERE1: %d\n", g_exit_code);
 	return (g_exit_code);
 }

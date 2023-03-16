@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 12:11:10 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/15 15:42:14 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/16 13:39:31 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,10 +126,8 @@ int	continue_checks(t_prompt *p, int flag, int *ret)
 		if (curr->type == HEREDOC && (curr->next->type == H_DELIMITER_QUOTES
 				|| curr->next->type == H_DELIMITER))
 		{
-			if (fill_heredoc(curr, curr->next, heredoc_nb, ret) == 0)
+			if (!fill_heredoc(curr, curr->next, heredoc_nb, ret))
 				return (0);
-			else if (fill_heredoc(curr, curr->next, heredoc_nb, ret) == 130)
-				return (g_exit_code);
 			heredoc_nb++;
 		}
 		curr = curr->next;
