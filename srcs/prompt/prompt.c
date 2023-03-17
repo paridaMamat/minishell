@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 12:37:43 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/20 10:42:30 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/17 12:21:03 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int	init_prompt(t_prompt *p, char **env)
 	if (!p->pipex)
 	{
 		ft_free_matrix(p->env);
-        return (perror("malloc"), 0);
+        return (perror("malloc"), 1);
 	}
 	return (1);
 }

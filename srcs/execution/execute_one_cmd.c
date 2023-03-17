@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 12:23:08 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/16 18:08:25 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/17 12:53:37 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	execute_built(t_prompt *p, t_list_tokens *e_tokens)
 	if (p->nbr_pipe != 0)
 	{
 		close_free_pipe(p);
-		exit_shell(p, g_exit_code);
+		exit_shell(p, ret);
 	}
 	return (ret);
 }

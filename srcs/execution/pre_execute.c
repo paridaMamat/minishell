@@ -6,13 +6,13 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/16 17:47:45 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/17 15:45:45 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	open_file(t_prompt *p, t_list_tokens *e_tokens)
+int	open_file(t_prompt *p, t_list_tokens *e_tokens)
 {
 	t_list_tokens	*tmp;
 
@@ -22,12 +22,11 @@ void	open_file(t_prompt *p, t_list_tokens *e_tokens)
 		&& p->outfile != -1 && tmp->type != END)
 	{
 		open_infile_outfile(p, tmp);
-		if (p->infile == -1)
-			perror("infile");
-		if (p->outfile == -1)
-			perror("outfile");
+		if (p->infile == -1 || p->outfile == -1)
+			perror("minishell");
 		tmp = tmp->next;
 	}
+	return (0);
 }
 
 int	count_pipe(t_prompt *p)

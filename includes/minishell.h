@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/17 10:02:34 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/17 16:09:29 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,7 +295,7 @@ int				minishell_export(t_prompt *p, t_list_tokens *e_tokens, int fd);
 int				open_pipe(t_prompt *p);
 int				init_data(t_prompt *p);
 int				start_execute(t_prompt *p);
-void			open_file(t_prompt *p, t_list_tokens *e_tokens);
+int			open_file(t_prompt *p, t_list_tokens *e_tokens);
 int				count_pipe(t_prompt *p);
 
 /*---------------------------- END PRE_EXECUTION -----------------------------*/
@@ -337,6 +337,7 @@ int				execute_one_sys(t_prompt *p, t_list_tokens *e_tokens);
 void			init_file_fd(t_prompt *p);
 void			open_infile_outfile(t_prompt *p, t_list_tokens *tmp);
 void			wait_signal(pid_t wpid, t_prompt *p, int save_status, int ib);
+int				get_result(t_prompt *p, t_list_tokens *e_tokens, int result);
 /*----------------------------- END  UTILS_EXECUTION  -----------------------*/
 
 int				check_in_env(t_prompt *p, char *str);

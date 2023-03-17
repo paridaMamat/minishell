@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:41:00 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/17 11:03:51 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/17 16:36:23 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,10 +105,7 @@ static int	path_and_execve(t_prompt *p, t_list_tokens *e_tokens)
 		}
 		p->pipex->cmd = get_cmd(p->pipex->path, e_tokens->str);
 		ft_free_matrix(p->pipex->path);
-		if (p->pipex->cmd != NULL)
-			result = execve(p->pipex->cmd, p->pipex->cmd_arg, p->env);
-		else
-			result = -1;
+		result = get_result(p, e_tokens, result);
 		free(p->pipex->cmd);
 	}
 	ft_free_matrix(p->pipex->cmd_arg);
@@ -119,22 +116,22 @@ int	execute_sys(t_prompt *p, t_list_tokens *e_tokens)
 {
 	int			result;
 
-	while (e_tokens->type != PIPE && e_tokens->type != END)
+	result = path_and_execve(p, e_tokens);
+	if (result == -1)
 	{
-		if (e_tokens->type == STRING)
-		{
-			result = path_and_execve(p, e_tokens);
-			if (result == -1)
-			{
-				ft_putstr_fd(e_tokens->str, STDERR_FILENO);
-				ft_putendl_fd(": command not found", STDERR_FILENO);
-				g_exit_code = 127;
-				if (p->nbr_pipe != 0)
-					ft_free_fd(p);
-				exit_shell(p, g_exit_code);
-			}
-		}
-		e_tokens = e_tokens->next;
+		ft_putstr_fd(e_tokens->str, STDERR_FILENO);
+		ft_putendl_fd(": command not found", STDERR_FILENO);
+		g_exit_code = 127;
 	}
+	if (result == -2)
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(e_tokens->str, STDERR_FILENO);
+		ft_putendl_fd(": permission denied", STDERR_FILENO);
+		g_exit_code = 126;
+	}
+	if (p->nbr_pipe != 0)
+		ft_free_fd(p);
+	exit_shell(p, g_exit_code);
 	return (result);
 }
