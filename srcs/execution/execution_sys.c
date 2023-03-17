@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:41:00 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/16 18:37:35 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/17 11:03:51 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,38 +89,36 @@ char	**create_cmd_arg(t_list_tokens *e_tokens)
 
 static int	path_and_execve(t_prompt *p, t_list_tokens *e_tokens)
 {
-	t_pipex	*pipex;
 	int		result;
 
-	pipex = p->pipex;
 	result = 0;
-	pipex->cmd_arg = create_cmd_arg(e_tokens);
+	p->pipex->cmd_arg = create_cmd_arg(e_tokens);
 	if (access(e_tokens->str, X_OK) != -1)
-		result = execve(e_tokens->str, pipex->cmd_arg, p->env);
+		result = execve(e_tokens->str, p->pipex->cmd_arg, p->env);
 	else
 	{
-		pipex->path = get_path(pipex, p->env);
-		if (pipex->path == NULL)
+		p->pipex->path = get_path(p->pipex, p->env);
+		if (p->pipex->path == NULL)
 		{
-			ft_free_matrix(pipex->cmd_arg);
+			ft_free_matrix(p->pipex->cmd_arg);
 			exit_shell(p, g_exit_code);
 		}
-		pipex->cmd = get_cmd(pipex->path, e_tokens->str);
-		ft_free_matrix(pipex->path);
-		if (pipex->cmd != NULL)
-			result = execve(pipex->cmd, pipex->cmd_arg, p->env);
-		free(pipex->cmd);
+		p->pipex->cmd = get_cmd(p->pipex->path, e_tokens->str);
+		ft_free_matrix(p->pipex->path);
+		if (p->pipex->cmd != NULL)
+			result = execve(p->pipex->cmd, p->pipex->cmd_arg, p->env);
+		else
+			result = -1;
+		free(p->pipex->cmd);
 	}
-	ft_free_matrix(pipex->cmd_arg);
+	ft_free_matrix(p->pipex->cmd_arg);
 	return (result);
 }
 
 int	execute_sys(t_prompt *p, t_list_tokens *e_tokens)
 {
 	int			result;
-	t_pipex		*pipex;
 
-	pipex = p->pipex;
 	while (e_tokens->type != PIPE && e_tokens->type != END)
 	{
 		if (e_tokens->type == STRING)
