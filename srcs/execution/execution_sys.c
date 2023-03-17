@@ -6,7 +6,7 @@
 /*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:41:00 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/15 14:31:42 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/16 18:37:35 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,14 +80,39 @@ char	**create_cmd_arg(t_list_tokens *e_tokens)
 	while (tmp->type != PIPE && tmp->type != END)
 	{
 		if (tmp->type == STRING)
-		{
-			array[i] = ft_strdup(tmp->str);
-			i++;
-		}
+			array[i++] = ft_strdup(tmp->str);
 		tmp = tmp->next;
 	}
 	array[i] = 0;
 	return (array);
+}
+
+static int	path_and_execve(t_prompt *p, t_list_tokens *e_tokens)
+{
+	t_pipex	*pipex;
+	int		result;
+
+	pipex = p->pipex;
+	result = 0;
+	pipex->cmd_arg = create_cmd_arg(e_tokens);
+	if (access(e_tokens->str, X_OK) != -1)
+		result = execve(e_tokens->str, pipex->cmd_arg, p->env);
+	else
+	{
+		pipex->path = get_path(pipex, p->env);
+		if (pipex->path == NULL)
+		{
+			ft_free_matrix(pipex->cmd_arg);
+			exit_shell(p, g_exit_code);
+		}
+		pipex->cmd = get_cmd(pipex->path, e_tokens->str);
+		ft_free_matrix(pipex->path);
+		if (pipex->cmd != NULL)
+			result = execve(pipex->cmd, pipex->cmd_arg, p->env);
+		free(pipex->cmd);
+	}
+	ft_free_matrix(pipex->cmd_arg);
+	return (result);
 }
 
 int	execute_sys(t_prompt *p, t_list_tokens *e_tokens)
@@ -100,30 +125,7 @@ int	execute_sys(t_prompt *p, t_list_tokens *e_tokens)
 	{
 		if (e_tokens->type == STRING)
 		{
-			pipex->cmd_arg = create_cmd_arg(e_tokens);
-			if (access(e_tokens->str, X_OK) != -1)
-				result = execve(e_tokens->str, pipex->cmd_arg, p->env);
-			else
-			{
-				pipex->path = get_path(pipex, p->env);
-				if (pipex->path == NULL)
-				{
-					ft_free_matrix(pipex->cmd_arg);
-					exit_shell(p, g_exit_code);
-				}
-				pipex->cmd = get_cmd(pipex->path, e_tokens->str);
-				ft_free_matrix(pipex->path);
-				if (pipex->cmd != NULL){
-					result = execve(pipex->cmd, pipex->cmd_arg, p->env);
-					ft_putstr_fd("TEST RESULT =", 2);
-					ft_putstr_fd(ft_itoa(result), 2);
-					ft_putstr_fd("\n", 2);
-					}
-				else
-					result = -1;
-				free(pipex->cmd);
-			}
-			ft_free_matrix(pipex->cmd_arg);
+			result = path_and_execve(p, e_tokens);
 			if (result == -1)
 			{
 				ft_putstr_fd(e_tokens->str, STDERR_FILENO);

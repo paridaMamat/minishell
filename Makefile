@@ -6,7 +6,7 @@
 #    By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/16 11:46:30 by mflores-          #+#    #+#              #
-#    Updated: 2023/03/15 10:33:38 by pmaimait         ###   ########.fr        #
+#    Updated: 2023/03/16 17:41:56 by pmaimait         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,7 +60,8 @@ BUILTINS_FILES = echo_builtin env_builtin export_builtin unset_builtin \
 BUILTINS_FOLDER = builtins/
 DEBUG_FILES = structures
 DEBUG_FOLDER = debug/
-EXECUTION_FILES = pre_execute execution_sys execution execute_one_cmd 
+EXECUTION_FILES = pre_execute execution_sys execution execute_one_cmd \
+				utils_execution
 EXECUTION_FOLDER = execution/
 
 SRCS_PATH = srcs/

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pre_execute.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/16 12:27:23 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/03/16 17:47:45 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,45 +14,14 @@
 
 void	open_file(t_prompt *p, t_list_tokens *e_tokens)
 {
-	t_list_tokens   *tmp;
+	t_list_tokens	*tmp;
 
 	tmp = e_tokens;
-	if (p->infile != -2)
+	init_file_fd(p);
+	while (tmp->type != PIPE && p->infile != -1
+		&& p->outfile != -1 && tmp->type != END)
 	{
-		close(p->infile);
-		p->infile = -2;
-	}
-	if (p->outfile != -2)
-	{
-		close(p->outfile);
-		p->outfile = -2;
-	}
-	while (tmp->type != PIPE && p->infile != -1 && p->outfile != -1 && tmp->type != END)
-	{
-		if (tmp->type == HEREDOC)
-		{
-			if (p->infile != -2)
-				close(p->infile);
-			p->infile = open(tmp->str, O_RDONLY);
-		}
-		if (tmp->type == INPUT)
-		{
-			if (p->infile != -2)
-				close(p->infile);
-			p->infile = open(tmp->next->str, O_RDONLY);
-		}
-		if (tmp->type == R_DREDIR)
-		{
-			if (p->outfile != -2)
-				close(p->outfile);
-			p->outfile = open(tmp->next->str, O_CREAT | O_WRONLY | O_APPEND, 0777);
-		}
-		if (tmp->type == R_REDIR)
-		{
-			if (p->outfile != -2)
-				close(p->outfile);
-			p->outfile = open(tmp->next->str, O_CREAT | O_RDWR | O_TRUNC, 0777);
-		}
+		open_infile_outfile(p, tmp);
 		if (p->infile == -1)
 			perror("infile");
 		if (p->outfile == -1)
@@ -63,8 +32,8 @@ void	open_file(t_prompt *p, t_list_tokens *e_tokens)
 
 int	count_pipe(t_prompt *p)
 {
-	int		i;
-	t_list_tokens   *tmp;
+	int				i;
+	t_list_tokens	*tmp;
 
 	i = 0;
 	tmp = p->tokens;
@@ -86,7 +55,7 @@ int	open_pipe(t_prompt *p)
 	p->pipex->fd = 0;
 	if (p->nbr_pipe != 0)
 	{
-		p->pipex->fd =(int **)malloc(sizeof(int *) * (p->nbr_pipe + 2));
+		p->pipex->fd = (int **)malloc(sizeof(int *) * (p->nbr_pipe + 2));
 		if (p->pipex->fd == NULL)
 			return (free(p->pipex), perror("malloc"), 1);
 		p->pipex->fd[p->nbr_pipe + 1] = 0;
@@ -94,9 +63,11 @@ int	open_pipe(t_prompt *p)
 		{
 			p->pipex->fd[i] = (int *)malloc(sizeof(int) * 2);
 			if (!p->pipex->fd[i])
-				return(free(p->pipex->fd), free(p->pipex), perror("pipe error\n"), 2);
+				return (free(p->pipex->fd), free(p->pipex),
+					perror("pipe error\n"), 2);
 			if (pipe(p->pipex->fd[i]) < 0)
-				return (free(p->pipex->fd), free(p->pipex), perror("pipe error\n"), 2);
+				return (free(p->pipex->fd), free(p->pipex),
+					perror("pipe error\n"), 2);
 			i++;
 		}
 	}
@@ -116,42 +87,28 @@ int	init_data(t_prompt *p)
 	return (ret);
 }
 
-int start_execute(t_prompt *p)
+int	start_execute(t_prompt *p)
 {
-    t_list_tokens   *curr;
-    pid_t    wpid;
-    int      save_status;
-	int		is_builtin;
-        
-    curr = p->tokens;
-    save_status = 0;
-    wpid = 0;
-	is_builtin = 0;
-    while (curr)
-    {
-        open_file(p, curr);
-        if (p->infile != -1 && p->outfile != -1)
-            save_status = execute_cmd(p, curr, &is_builtin);
-        while (curr->type != PIPE && curr->type != END)
-            curr = curr->next;
-        curr = curr->next;
-    }
-    if (p->nbr_pipe != 0)
-		close_free_pipe(p);
-	wpid = waitpid(-1, &g_exit_code, 0);
-	save_status = g_exit_code;
-	while (wpid != -1 || errno != ECHILD)
-	{
-		wpid = waitpid(-1, &g_exit_code, 0);
-		if (wpid == p->pipex->pid && p->nbr_pipe > 0)
-			save_status = g_exit_code;
-	}
-    if (WIFSIGNALED(save_status) && is_builtin == 0)
-        g_exit_code = 128 + WTERMSIG(save_status);
-    else if (WIFEXITED(save_status) && is_builtin == 0)
-        g_exit_code = WEXITSTATUS(save_status);
-    else if (is_builtin == 0)
-        g_exit_code = save_status;
-    return (g_exit_code);
-}
+	t_list_tokens	*curr;
+	pid_t			wpid;
+	int				save_status;
+	int				is_builtin;
 
+	curr = p->tokens;
+	save_status = 0;
+	wpid = 0;
+	is_builtin = 0;
+	while (curr)
+	{
+		open_file(p, curr);
+		if (p->infile != -1 && p->outfile != -1)
+			save_status = execute_cmd(p, curr, &is_builtin);
+		while (curr->type != PIPE && curr->type != END)
+			curr = curr->next;
+		curr = curr->next;
+	}
+	if (p->nbr_pipe != 0)
+		close_free_pipe(p);
+	wait_signal(wpid, p, save_status, is_builtin);
+	return (g_exit_code);
+}

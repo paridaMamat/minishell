@@ -3,14 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   execute_one_cmd.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 12:23:08 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/16 12:28:34 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/03/16 18:08:25 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"minishell.h"
+
+static int	choice_builtin(t_prompt *p, t_list_tokens *e_tokens, int fd)
+{
+	int	ret;
+
+	ret = 0;
+	if (ft_strncmp(e_tokens->str, "echo", 5) == 0)
+		ret = minishell_echo(p, e_tokens->next, fd);
+	else if (ft_strncmp(e_tokens->str, "cd", 3) == 0)
+		ret = minishell_cd(p, e_tokens->next, fd);
+	else if (ft_strncmp(e_tokens->str, "env", 4) == 0)
+		ret = minishell_env(p, e_tokens->next, fd);
+	else if (ft_strncmp(e_tokens->str, "export", 7) == 0)
+		ret = minishell_export(p, e_tokens->next, fd);
+	else if (ft_strncmp(e_tokens->str, "pwd", 4) == 0)
+		ret = minishell_pwd(p, e_tokens, fd);
+	else if (ft_strncmp(e_tokens->str, "unset", 6) == 0)
+		ret = minishell_unset(p, e_tokens->next);
+	else if (ft_strncmp(e_tokens->str, "exit", 5) == 0)
+		ret = minishell_exit(p, e_tokens->next, fd);
+	return (ret);
+}
 
 int	execute_built(t_prompt *p, t_list_tokens *e_tokens)
 {
@@ -26,20 +48,7 @@ int	execute_built(t_prompt *p, t_list_tokens *e_tokens)
 		fd = p->pipex->fd[e_tokens->index][1];
 	else
 		fd = STDOUT_FILENO;
-	if (ft_strncmp(e_tokens->str, "echo", 5) == 0)
-		ret = minishell_echo(p, e_tokens->next, fd);
-	else if (ft_strncmp(e_tokens->str, "cd", 3) == 0)
-		ret = minishell_cd(p, e_tokens->next, fd);
-	else if (ft_strncmp(e_tokens->str, "env", 4) == 0)
-		ret = minishell_env(p, e_tokens->next, fd);
-	else if (ft_strncmp(e_tokens->str, "export", 7) == 0)
-		ret = minishell_export(p, e_tokens->next, fd);
-	else if (ft_strncmp(e_tokens->str, "pwd", 4) == 0)
-		ret = minishell_pwd(p, e_tokens, fd);
-	else if (ft_strncmp(e_tokens->str, "unset", 6) == 0)
-		ret = minishell_unset(p, e_tokens->next);
-	else if (ft_strncmp(e_tokens->str, "exit", 5) == 0)
-		ret = minishell_exit(p, e_tokens->next, fd);
+	ret = choice_builtin(p, e_tokens, fd);
 	if (p->outfile != -2)
 		close(p->outfile);
 	if (e_tokens->index < p->nbr_pipe)

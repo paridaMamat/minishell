@@ -3,14 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/16 12:33:27 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/03/17 10:02:34 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
@@ -108,7 +106,6 @@ typedef struct s_pipex
 	char			*cmd;
 	char			**cmd_arg;
 }	t_pipex;
-
 
 typedef struct s_prompt
 {
@@ -254,6 +251,12 @@ int				close_free_pipe(t_prompt *p);
 	is this a function of builtings
 */
 int				is_built(char *str);
+
+/**
+	certain function for builtins
+*/
+char			*ft_strjoin_free(char *s1, char *s2);
+int				print_export(t_prompt *p, int fd);
 /*----------------------------- END UTILS ------------------------------------*/
 
 /*------------------------------- DEBUG --------------------------------------*/
@@ -275,13 +278,13 @@ void			print_structs_debug(t_prompt **p, int with_env);
 
 /*------------------------------ BUILTINS ------------------------------------*/
 
-int			minishell_echo(t_prompt *p, t_list_tokens *e_tokens, int fd);
-int			minishell_pwd(t_prompt *p, t_list_tokens *e_tokens, int fd);
-int			minishell_env(t_prompt *p, t_list_tokens *e_tokens, int fd);
-int			minishell_cd(t_prompt *p, t_list_tokens *e_tokens, int fd);
-int			minishell_unset(t_prompt *p, t_list_tokens *e_tokens);
-int			minishell_exit(t_prompt *p, t_list_tokens *e_tokens, int fd);
-int			minishell_export(t_prompt *p, t_list_tokens *e_tokens, int fd);
+int				minishell_echo(t_prompt *p, t_list_tokens *e_tokens, int fd);
+int				minishell_pwd(t_prompt *p, t_list_tokens *e_tokens, int fd);
+int				minishell_env(t_prompt *p, t_list_tokens *e_tokens, int fd);
+int				minishell_cd(t_prompt *p, t_list_tokens *e_tokens, int fd);
+int				minishell_unset(t_prompt *p, t_list_tokens *e_tokens);
+int				minishell_exit(t_prompt *p, t_list_tokens *e_tokens, int fd);
+int				minishell_export(t_prompt *p, t_list_tokens *e_tokens, int fd);
 
 /*---------------------------- END BUILTINS ----------------------------------*/
 
@@ -312,24 +315,34 @@ char			**create_cmd_arg(t_list_tokens *e_tokens);
 /**
    execute 
  */
-int				child_process(t_prompt *p, t_list_tokens *e_tokens, int *is_builtin);
-int				execute_cmd(t_prompt *p, t_list_tokens *e_tokens, int *is_builtin);
+int				child_process(t_prompt *p, t_list_tokens *e_tokens, int *ib);
+int				execute_cmd(t_prompt *p, t_list_tokens *e_tokens, int *ib);
 int				execute(t_prompt *p, t_list_tokens *e_tokens);
-int				one_command(t_prompt *p, t_list_tokens *e_tokens, int *is_builtin);
+int				one_command(t_prompt *p, t_list_tokens *e_tokens, int *ib);
 
-/*----------------------------- END EXECUTION --------------------------------*/
+/*----------------------------- END EXECUTION -------------------------------*/
 
-/*----------------------------- EXECUTE_ONE_CMD -------------------------------*/
+/*----------------------------- EXECUTE_ONE_CMD -----------------------------*/
 /**
    execute one command
  */
 int				execute_built(t_prompt *p, t_list_tokens *e_tokens);
 int				execute_one_sys(t_prompt *p, t_list_tokens *e_tokens);
-/*----------------------------- END  EXECUTE_ONE_CMD  -------------------------*/
+/*----------------------------- END  EXECUTE_ONE_CMD  ------------------------*/
+
+/*----------------------------- UTILS_EXECUTION ------------------------------*/
+/**
+   utils for execution
+ */
+void			init_file_fd(t_prompt *p);
+void			open_infile_outfile(t_prompt *p, t_list_tokens *tmp);
+void			wait_signal(pid_t wpid, t_prompt *p, int save_status, int ib);
+/*----------------------------- END  UTILS_EXECUTION  -----------------------*/
 
 int				check_in_env(t_prompt *p, char *str);
 int				print_export(t_prompt *p, int fd);
-int				export_arg(t_prompt *p, t_list_tokens *e_tokens, int fd);
+int				export_arg(t_prompt *p, t_list_tokens *e_tokens);
 int				add_or_replace_env(t_prompt *p, char *line, char *str);
 int				ft_matrixlen(char **m);
+int				print_perror_export(char *arg);
 #endif
