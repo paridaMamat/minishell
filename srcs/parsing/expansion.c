@@ -6,13 +6,13 @@
 /*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/06 15:16:28 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/17 21:40:13 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/03/20 14:20:49 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*get_var(char *str)
+static char	*get_var(char **env, char *str)
 {
 	char	*res;
 
@@ -30,14 +30,18 @@ static char	*get_var(char *str)
 	else
 	{
 		res = ft_strdup(getenv(str + 1));
-		free(str);
 		if (!res)
-			return (ft_strdup(""));
-		return (res);
+		{
+			res = ft_strdup(get_env_var(env, str + 1));
+			if (!res)
+				return (free(str), ft_strdup(""));
+		}
+		return (free(str), res);
 	}
 }
 
-static int	expand_nodes_with_variables(t_list_tokens **ptr, int heredoc)
+static int	expand_nodes_with_variables(char **env, t_list_tokens **ptr, \
+int heredoc)
 {
 	t_list_tokens	*tmp;
 
@@ -45,7 +49,8 @@ static int	expand_nodes_with_variables(t_list_tokens **ptr, int heredoc)
 	while (tmp)
 	{
 		if (tmp->str[0] == '$' && tmp->str[1] == '\0' && tmp->next
-			&& heredoc == 0)
+			&& heredoc == 0 && (tmp->type != D_QUOTE && tmp->type != S_QUOTE \
+			&& tmp->type != STRING))
 		{
 			free(tmp->str);
 			tmp->str = ft_strdup("");
@@ -54,7 +59,7 @@ static int	expand_nodes_with_variables(t_list_tokens **ptr, int heredoc)
 		}
 		else if (ft_strchr(tmp->str, '$'))
 		{
-			tmp->str = get_var(tmp->str);
+			tmp->str = get_var(env, tmp->str);
 			if (!tmp->str)
 				return (0);
 		}
@@ -63,7 +68,7 @@ static int	expand_nodes_with_variables(t_list_tokens **ptr, int heredoc)
 	return (1);
 }
 
-char	*get_dollar(char *str, int type, int heredoc)
+char	*get_dollar(char **env, char *str, int type, int heredoc)
 {
 	char			*new_str;
 	t_list_tokens	*ptr_str;
@@ -72,7 +77,7 @@ char	*get_dollar(char *str, int type, int heredoc)
 	new_str = NULL;
 	if (isolate_var(&ptr_str, str, type) == -1)
 		return (NULL);
-	if (!expand_nodes_with_variables(&ptr_str, heredoc))
+	if (!expand_nodes_with_variables(env, &ptr_str, heredoc))
 	{
 		lstclear_token(&ptr_str);
 		return (NULL);

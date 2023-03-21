@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 12:11:10 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/16 13:39:31 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/20 12:28:56 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ static char	*get_heredoc_name(int h_nb, int	*fd)
 	return (name);
 }
 
-static int	evaluate_line(t_list_tokens *delimiter, char **line, int *ret)
+static int	evaluate_line(t_prompt *p, t_list_tokens *delimiter, \
+char **line, int *ret)
 {
 	if (*line == NULL)
 	{
@@ -50,7 +51,7 @@ static int	evaluate_line(t_list_tokens *delimiter, char **line, int *ret)
 	}
 	if (delimiter->type == H_DELIMITER && ft_strchr(*line, '$'))
 	{
-		*line = get_dollar(*line, delimiter->type, 1);
+		*line = get_dollar(p->env, *line, delimiter->type, 1);
 		if (!*line)
 		{
 			free_ptr(*line);
@@ -74,8 +75,8 @@ char *infile, int *fd)
 	free_ptr(delimiter);
 }
 
-static int	fill_heredoc(t_list_tokens *heredoc, t_list_tokens *delimiter, \
-int h_nb, int *ret)
+static int	fill_heredoc(t_prompt *p, t_list_tokens *heredoc, int h_nb, \
+int *ret)
 {
 	char	*line;
 	char	*infile;
@@ -90,20 +91,17 @@ int h_nb, int *ret)
 		return (0);
 	g_exit_code = 0;
 	line = readline(PROMPT_S2);
-	while (g_exit_code != 130 && evaluate_line(delimiter, &line, ret))
+	while (g_exit_code != 130 && evaluate_line(p, heredoc->next, &line, ret))
 	{
 		ft_putendl_fd(line, tmp_fd);
 		free_ptr(line);
 		line = readline(PROMPT_S2);
 	}
-	update_node(heredoc, delimiter, infile, &old_stdin);
+	update_node(heredoc, heredoc->next, infile, &old_stdin);
 	free_ptr(line);
 	close(tmp_fd);
 	if (g_exit_code == 130)
-	{
-		printf("g_exit_code: %d\n", g_exit_code);
-		return (0);
-	}
+		return (*ret);
 	return (*ret);
 }
 
@@ -126,7 +124,8 @@ int	continue_checks(t_prompt *p, int flag, int *ret)
 		if (curr->type == HEREDOC && (curr->next->type == H_DELIMITER_QUOTES
 				|| curr->next->type == H_DELIMITER))
 		{
-			if (!fill_heredoc(curr, curr->next, heredoc_nb, ret))
+			if (!fill_heredoc(p, curr, heredoc_nb, ret)
+				|| g_exit_code == 130)
 				return (0);
 			heredoc_nb++;
 		}

@@ -6,7 +6,7 @@
 /*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 11:32:41 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/16 12:29:00 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/03/20 20:06:28 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,43 +71,46 @@ static int	get_exit_code(char *arg, int *flag)
 	return (i % 256);
 }
 
-int	minishell_exit(t_prompt *p, t_list_tokens *e_tokens, int fd)
+static void	close_free_stuff(t_prompt *p, t_list_tokens *e_tokens, int ret)
 {
-	int		exit_code;
-	int		flag;
-
-	(void)fd;
-	flag = 0;
-	exit_code = 0;
-	if (e_tokens->type == END || e_tokens->type == PIPE)
-		exit_code = g_exit_code;
-	else if (e_tokens->type == STRING)
-	{
-		exit_code = get_exit_code(e_tokens->str, &flag);
-		if (flag)
-		{
-			exit_code = 2;
-			ft_putstr_fd(ERR_EXIT, STDERR_FILENO);
-			ft_putstr_fd(e_tokens->str, STDERR_FILENO);
-			ft_putendl_fd(ERR_EXIT_MSG1, STDERR_FILENO);
-		}
-		else if (e_tokens->next->type == STRING)
-		{
-			g_exit_code = 1;
-			return (ft_putendl_fd(ERR_EXIT ERR_EXIT_MSG2, STDERR_FILENO), 1);
-		}
-	}
-	g_exit_code = exit_code;
-	ft_putendl_fd("exit", STDOUT_FILENO);
 	if (p->outfile != -2)
 		close(p->outfile);
 	if (e_tokens->index < p->nbr_pipe)
 		close(p->pipex->fd[e_tokens->index][1]);
+	g_exit_code = ret;
 	if (p->nbr_pipe != 0)
 	{
 		close_free_pipe(p);
 		exit_shell(p, g_exit_code);
 	}
-	exit_shell(p, exit_code);
+	exit_shell(p, g_exit_code);
+}
+
+int	minishell_exit(t_prompt *p, t_list_tokens *e_tokens, int fd)
+{
+	int		flag;
+	int		ret;
+
+	(void)fd;
+	flag = 0;
+	ret = 0;
+	if (p->nbr_pipe == 0)
+		ft_putendl_fd("exit", STDOUT_FILENO);
+	if (e_tokens->type == END || e_tokens->type == PIPE)
+		ret = g_exit_code;
+	else if (e_tokens->type == STRING)
+	{
+		ret = get_exit_code(e_tokens->str, &flag);
+		if (flag)
+		{
+			ret = 2;
+			ft_putstr_fd(ERR_EXIT, STDERR_FILENO);
+			ft_putstr_fd(e_tokens->str, STDERR_FILENO);
+			ft_putendl_fd(ERR_EXIT_MSG1, STDERR_FILENO);
+		}
+		else if (e_tokens->next->type == STRING)
+			return (ft_putendl_fd(ERR_EXIT ERR_EXIT_MSG2, STDERR_FILENO), 1);
+	}
+	close_free_stuff(p, e_tokens, ret);
 	return (2);
 }

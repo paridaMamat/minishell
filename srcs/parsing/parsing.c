@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 12:13:25 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/16 13:40:10 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/20 20:25:09 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,10 @@ static int	tokenize(t_prompt *p)
 				return (0);
 		}
 		else if (curr->type == STRING && has_special_char(curr->str))
-			if (!handle_nodes(curr))
+		{
+			if (!handle_nodes(p, curr))
 				return (0);
+		}
 		curr = curr->next;
 	}
 	return (1);
@@ -94,16 +96,22 @@ int	set_syntax_error(int status, char *err_msg)
 */
 int	parse_line(t_prompt *p)
 {
-	int	err;
-	int	ret;
+	int		err;
+	int		ret;
+	char	*line;
 
 	err = 0;
 	ret = 0;
+	line = ft_strdup(p->line);
+	p->line = get_dollar(p->env, p->line, STRING, 0);
+	if (!p->line)
+		return (free(line), 2);
 	if (!pre_tokenize(p, ft_strlen(p->line)))
-		return (2);
+		return (free(line), 2);
 	if (!tokenize(p))
-		return (2);
-	add_history(p->line);
+		return (free(line), 2);
+	add_history(line);
+	free(line);
 	if (!check_tokens(p))
 	{
 		err = 1;

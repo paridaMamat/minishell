@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_execution.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 17:19:29 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/17 16:45:24 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/21 13:43:54 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@ void	init_file_fd(t_prompt *p)
 {
 	if (p->infile != -2)
 	{
-		close(p->infile);
+		if (p->infile != -1)
+			close(p->infile);
 		p->infile = -2;
 	}
 	if (p->outfile != -2)
 	{
-		close(p->outfile);
+		if (p->infile != -1)
+			close(p->outfile);
 		p->outfile = -2;
 	}
 }
@@ -76,13 +78,57 @@ void	wait_signal(pid_t wpid, t_prompt *p, int save_status, int is_builtin)
 		g_exit_code = save_status;
 }
 
-int	get_result(t_prompt *p, t_list_tokens *e_tokens, int result)
+static int	continue_result(t_list_tokens *e_tokens, int result)
 {
-	if (p->pipex->cmd != NULL)
-		result = execve(p->pipex->cmd, p->pipex->cmd_arg, p->env);
-	else if (access(e_tokens->str, F_OK) != -1)
-		result = -2;
+	if (access(e_tokens->str, F_OK) != -1 \
+	&& ((ft_strncmp(e_tokens->str, "./", 2) == 0) \
+	&& ft_strlen(e_tokens->str) > 2))
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(e_tokens->str, STDERR_FILENO);
+		ft_putendl_fd(": permission denied", STDERR_FILENO);
+		g_exit_code = 126;
+		return (126);
+	}
+	else if ((ft_strncmp(e_tokens->str, "./", 2) == 0)
+		&& ft_strlen(e_tokens->str) > 2)
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(e_tokens->str, STDERR_FILENO);
+		ft_putendl_fd(": no such file or directory", STDERR_FILENO);
+		g_exit_code = 127;
+		return (127);
+	}
 	else
 		result = -1;
+	return (result);
+}
+
+int	get_result(t_prompt *p, t_list_tokens *e_tokens, int result)
+{
+	int	fd;
+
+	fd = open(e_tokens->str, O_RDWR);
+	if (fd == -1 && errno == EISDIR)
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(e_tokens->str, STDERR_FILENO);
+		ft_putendl_fd(": Is a directory", STDERR_FILENO);
+		g_exit_code = 126;
+		return (126);
+	}
+	if (fd != -1)
+		close (fd);
+	if (p->pipex->cmd != NULL)
+		result = execve(p->pipex->cmd, p->pipex->cmd_arg, p->env);
+	else if (access(e_tokens->str, X_OK) != -1
+		&& ((ft_strncmp(e_tokens->str, "./", 2) == 0)
+			&& ft_strlen(e_tokens->str) > 2))
+	{
+		g_exit_code = 0;
+		return (0);
+	}
+	else
+		result = continue_result(e_tokens, result);
 	return (result);
 }

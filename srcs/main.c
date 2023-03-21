@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 01:56:18 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/17 10:04:58 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/20 19:46:42 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,13 @@ static int	check_args(int ac)
 	On failure or exiting, returns NULL.
 	If user presses enter and line is empty, continues reading a new line.
 	If not empty, recovers the line and is added to history.
+	//print_structs_debug(&p, 0);
 */
 static void	check_line(t_prompt *p)
 {
+	int		ret;
+
+	ret = 0;
 	if (!p->line)
 	{
 		ft_putendl_fd(MSG_EXIT, STDOUT_FILENO);
@@ -35,14 +39,15 @@ static void	check_line(t_prompt *p)
 	}
 	if (p->line[0] != '\0')
 	{
-		g_exit_code = parse_line(p);
-		if (g_exit_code == 0)
+		ret = parse_line(p);
+		if (ret == 0)
 		{
-			//print_structs_debug(&p, 0);
-			g_exit_code = init_data(p);
-			if (g_exit_code == 0)
+			ret = init_data(p);
+			if (ret == 0)
 				start_execute(p);
 		}
+		else if (g_exit_code != 130)
+			g_exit_code = ret;
 	}
 	free_line(p);
 }
@@ -54,9 +59,7 @@ static void	start_minishell(t_prompt *p)
 		setup_signal_handlers();
 		p->p = get_prompt(p);
 		if (!p->p)
-		{
 			p->line = readline(DEFAULT_PROMPT);
-		}
 		else
 		{
 			p->line = readline(p->p);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd_builtin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 20:02:02 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/17 12:54:26 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/20 12:21:28 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,8 +105,10 @@ int	minishell_cd(t_prompt *p, t_list_tokens *e_tokens, int fd)
 		|| e_tokens->type != STRING)
 	{
 		path = get_var(p->env, "HOME");
-		if (!path || *path == '\0' || ft_isspace(*path))
+		if (!path)
 			return (ft_putendl_fd(ERR_CD_MSG1, STDERR_FILENO), 1);
+		else if (*path == '\0')
+			return (0);
 		return (!change_dir(p, path));
 	}
 	if (e_tokens->next->type == STRING)

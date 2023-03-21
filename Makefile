@@ -3,13 +3,12 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+         #
+#    By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/16 11:46:30 by mflores-          #+#    #+#              #
-#    Updated: 2023/03/16 17:41:56 by pmaimait         ###   ########.fr        #
+#    Updated: 2023/03/20 16:03:49 by mflores-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
 
 #------------------------------------------------------------------------------#
 #									GENERAL               				       #
@@ -47,8 +46,6 @@ ROOT_FILES = main
 PARSING_FILES = parsing parsing_utils lexer tokens list_actions expansion \
 				expansion_utils heredoc
 PARSING_FOLDER = parsing/
-ENV_FILES = env
-ENV_FOLDER = env/
 PROMPT_FILES = prompt
 PROMPT_FOLDER = prompt/
 SIGNALS_FILES = signal
@@ -67,7 +64,6 @@ EXECUTION_FOLDER = execution/
 SRCS_PATH = srcs/
 SRCS_NAMES 	= $(addsuffix .c, $(ROOT_FILES) \
 							$(addprefix $(PARSING_FOLDER), $(PARSING_FILES)) \
-							$(addprefix $(ENV_FOLDER), $(ENV_FILES)) \
 							$(addprefix $(PROMPT_FOLDER), $(PROMPT_FILES)) \
 							$(addprefix $(SIGNALS_FOLDER), $(SIGNALS_FILES)) \
 							$(addprefix $(UTILS_FOLDER), $(UTILS_FILES)) \
@@ -165,7 +161,7 @@ check:
 	echo "$(GREEN)[ ✔ ]$(WHITE)	Norme"
 
 norme:
-	norminette $(HEADERS) $(SRCS_PATH)
+	norminette $(HEADERS) $(SRCS_PATH) $(LIB_PATH)
 
 #Colors
 DEF_COLOR = \033[0;39m

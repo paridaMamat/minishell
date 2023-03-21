@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:38:40 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/17 16:09:29 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/20 20:20:04 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 # include <signal.h>
 # include <sys/wait.h>
 # include <sys/types.h>
-# include <sys/ioctl.h>
+# include <sys/stat.h>
 # include <errno.h>
 
 /******************************************************************************/
@@ -44,8 +44,7 @@
 # define READ_END 0
 # define WRITE_END 1
 # define MSG_EXIT "exit"
-//# define HEREDOC_NAME "/tmp/.minishell_heredoc_"
-# define HEREDOC_NAME ".minishell_heredoc_"
+# define HEREDOC_NAME "/tmp/.minishell_heredoc_"
 
 /* ERROR MESSAGES */
 # define HELL_NO "No way Jose, but nice try!"
@@ -156,10 +155,6 @@ typedef enum e_tokens
 /*                                                                            */
 /******************************************************************************/
 
-/*-------------------------------- ENV ---------------------------------------*/
-
-/*------------------------------ END ENV -------------------------------------*/
-
 /*------------------------------ PARSING -------------------------------------*/
 
 int				set_syntax_error(int status, char *err_msg);
@@ -167,8 +162,8 @@ int				parse_line(t_prompt *p);
 int				set_status(int status, char *line, int i);
 int				save_word_or_sep(int *i, int start, t_prompt *p);
 int				check_string(t_list_tokens **sub_tokens, char *str);
-int				handle_nodes(t_list_tokens *n);
-char			*get_dollar(char *str, int type, int heredoc);
+int				handle_nodes(t_prompt *p, t_list_tokens *n);
+char			*get_dollar(char **env, char *str, int type, int heredoc);
 int				isolate_var(t_list_tokens **ptr, char *str, int type);
 int				handle_heredoc_delimiter(t_list_tokens *t);
 int				check_tokens(t_prompt *p);
@@ -191,6 +186,7 @@ int				init_prompt(t_prompt *p, char **env);
 	directory. On failure, returns NULL.
 */
 char			*get_prompt(t_prompt *p);
+char			*get_env_var(char **env, char *var);
 
 /*----------------------------- END PROMPT -----------------------------------*/
 
@@ -219,6 +215,11 @@ char			**ft_extend_matrix(char **in, char *newstr);
 	Allocates new matrix.
 */
 char			**ft_dup_matrix(char **m);
+
+/**
+	Returns the lenght of a matrix
+*/
+int				ft_matrixlen(char **m);
 
 /**
 	Frees pointer and sets it to NULL.
@@ -257,6 +258,7 @@ int				is_built(char *str);
 */
 char			*ft_strjoin_free(char *s1, char *s2);
 int				print_export(t_prompt *p, int fd);
+
 /*----------------------------- END UTILS ------------------------------------*/
 
 /*------------------------------- DEBUG --------------------------------------*/
@@ -281,8 +283,10 @@ void			print_structs_debug(t_prompt **p, int with_env);
 int				minishell_echo(t_prompt *p, t_list_tokens *e_tokens, int fd);
 int				minishell_pwd(t_prompt *p, t_list_tokens *e_tokens, int fd);
 int				minishell_env(t_prompt *p, t_list_tokens *e_tokens, int fd);
+int				print_perror_export(char *arg);
 int				minishell_cd(t_prompt *p, t_list_tokens *e_tokens, int fd);
 int				minishell_unset(t_prompt *p, t_list_tokens *e_tokens);
+int				check_in_env(t_prompt *p, char *str);
 int				minishell_exit(t_prompt *p, t_list_tokens *e_tokens, int fd);
 int				minishell_export(t_prompt *p, t_list_tokens *e_tokens, int fd);
 
@@ -292,11 +296,8 @@ int				minishell_export(t_prompt *p, t_list_tokens *e_tokens, int fd);
 /**
    Prepare for execution
  */
-int				open_pipe(t_prompt *p);
 int				init_data(t_prompt *p);
 int				start_execute(t_prompt *p);
-int			open_file(t_prompt *p, t_list_tokens *e_tokens);
-int				count_pipe(t_prompt *p);
 
 /*---------------------------- END PRE_EXECUTION -----------------------------*/
 
@@ -305,9 +306,6 @@ int				count_pipe(t_prompt *p);
    execute the system's command 
  */
 int				execute_sys(t_prompt *p, t_list_tokens *e_tokens);
-char			**get_path(t_pipex *pipex, char **envp);
-char			*get_cmd(char **path, char *cmd);
-char			**create_cmd_arg(t_list_tokens *e_tokens);
 
 /*---------------------------- END EXECUTION_SYS_BIN -------------------------*/
 
@@ -315,10 +313,7 @@ char			**create_cmd_arg(t_list_tokens *e_tokens);
 /**
    execute 
  */
-int				child_process(t_prompt *p, t_list_tokens *e_tokens, int *ib);
 int				execute_cmd(t_prompt *p, t_list_tokens *e_tokens, int *ib);
-int				execute(t_prompt *p, t_list_tokens *e_tokens);
-int				one_command(t_prompt *p, t_list_tokens *e_tokens, int *ib);
 
 /*----------------------------- END EXECUTION -------------------------------*/
 
@@ -328,6 +323,7 @@ int				one_command(t_prompt *p, t_list_tokens *e_tokens, int *ib);
  */
 int				execute_built(t_prompt *p, t_list_tokens *e_tokens);
 int				execute_one_sys(t_prompt *p, t_list_tokens *e_tokens);
+
 /*----------------------------- END  EXECUTE_ONE_CMD  ------------------------*/
 
 /*----------------------------- UTILS_EXECUTION ------------------------------*/
@@ -338,12 +334,7 @@ void			init_file_fd(t_prompt *p);
 void			open_infile_outfile(t_prompt *p, t_list_tokens *tmp);
 void			wait_signal(pid_t wpid, t_prompt *p, int save_status, int ib);
 int				get_result(t_prompt *p, t_list_tokens *e_tokens, int result);
+
 /*----------------------------- END  UTILS_EXECUTION  -----------------------*/
 
-int				check_in_env(t_prompt *p, char *str);
-int				print_export(t_prompt *p, int fd);
-int				export_arg(t_prompt *p, t_list_tokens *e_tokens);
-int				add_or_replace_env(t_prompt *p, char *line, char *str);
-int				ft_matrixlen(char **m);
-int				print_perror_export(char *arg);
 #endif

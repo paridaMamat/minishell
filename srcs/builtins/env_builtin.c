@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_builtin.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:41:53 by mflores-          #+#    #+#             */
-/*   Updated: 2023/03/16 16:09:56 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/20 14:55:57 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	print_perror_export(char *arg)
 {
 	ft_putstr_fd("minishell: export :'", 2);
 	ft_putstr_fd(arg, 2);
-	ft_putendl_fd("' not a valide identifier", 2);
+	ft_putendl_fd("' not a valid identifier", 2);
 	g_exit_code = 1;
 	return (g_exit_code);
 }

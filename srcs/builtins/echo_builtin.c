@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo_builtin.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parida <parida@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:02:44 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/27 22:49:48 by parida           ###   ########.fr       */
+/*   Updated: 2023/03/20 14:33:40 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,20 +43,16 @@ static int	is_there_more(t_list_tokens *t)
 	return (0);
 }
 
-static void	print_args(t_list_tokens *t, int n_flag, int fd)
+static void	print_args(t_list_tokens *t, int fd)
 {
-	int		i;
-
-	i = 0;
-	if (!t->str[i])
+	if (!t->str[0])
+		ft_putchar_fd('\0', fd);
+	else
 	{
-		if (!n_flag)
-			ft_putchar_fd('\n', fd);
-		return ;
+		ft_putstr_fd(t->str, fd);
+		if (is_there_more(t))
+			ft_putchar_fd(' ', fd);
 	}
-	ft_putstr_fd(t->str, fd);
-	if (is_there_more(t))
-		ft_putchar_fd(' ', fd);
 }
 
 int	minishell_echo(t_prompt *p, t_list_tokens *e_tokens, int fd)
@@ -76,14 +72,10 @@ int	minishell_echo(t_prompt *p, t_list_tokens *e_tokens, int fd)
 	}
 	if (n_flag)
 		tmp = tmp->next;
-	//while (tmp->next)
 	while (tmp && (tmp->type != END && tmp->type != PIPE))
 	{
-/* 		if (tmp->type == STRING && (tmp->prev->type != INPUT
-				&& tmp->prev->type != R_DREDIR && tmp->prev->type != R_REDIR))
-			print_args(tmp, n_flag); */
 		if (tmp->type == STRING)
-            print_args(tmp, n_flag, fd); 
+			print_args(tmp, fd);
 		tmp = tmp->next;
 	}
 	if (!n_flag)

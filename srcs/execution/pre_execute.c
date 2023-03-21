@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   pre_execute.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:36:06 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/17 15:45:45 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/21 13:32:31 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	open_file(t_prompt *p, t_list_tokens *e_tokens)
+static int	open_file(t_prompt *p, t_list_tokens *e_tokens)
 {
 	t_list_tokens	*tmp;
 
@@ -23,13 +23,20 @@ int	open_file(t_prompt *p, t_list_tokens *e_tokens)
 	{
 		open_infile_outfile(p, tmp);
 		if (p->infile == -1 || p->outfile == -1)
-			perror("minishell");
+		{
+			if (p->infile != -2 && p->infile != -1)
+				close(p->infile);
+			if (p->outfile != -2 && p->outfile != -1)
+				close(p->outfile);
+			ft_putstr_fd("minishell: ", STDERR_FILENO);
+			perror(tmp->next->str);
+		}
 		tmp = tmp->next;
 	}
 	return (0);
 }
 
-int	count_pipe(t_prompt *p)
+static int	count_pipe(t_prompt *p)
 {
 	int				i;
 	t_list_tokens	*tmp;
@@ -46,7 +53,7 @@ int	count_pipe(t_prompt *p)
 	return (i);
 }
 
-int	open_pipe(t_prompt *p)
+static int	open_pipe(t_prompt *p)
 {
 	int	i;
 
@@ -82,6 +89,8 @@ int	init_data(t_prompt *p)
 	p->outfile = -2;
 	p->tokens->index = -1;
 	p->nbr_pipe = count_pipe(p);
+	p->pipex->cmd = NULL;
+	p->pipex->cmd_arg = NULL;
 	ret = open_pipe(p);
 	return (ret);
 }

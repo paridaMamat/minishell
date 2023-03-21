@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 15:12:22 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/16 18:00:17 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/20 16:40:23 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	one_command(t_prompt *p, t_list_tokens *e_tokens, int *is_builtin)
+static int	one_command(t_prompt *p, t_list_tokens *e_tokens, int *is_builtin)
 {
 	int	ret;
 
@@ -44,7 +44,7 @@ static void	dup_fd(t_prompt *p, int **fd, int index)
 	close_pipe(p);
 }
 
-int	child_process(t_prompt *p, t_list_tokens *e_tokens, int *is_builtin)
+static int	child_process(t_prompt *p, t_list_tokens *e_tokens, int *is_builtin)
 {
 	int				**fd;
 	int				index;

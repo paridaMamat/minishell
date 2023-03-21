@@ -6,7 +6,7 @@
 /*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/26 14:24:01 by mflores-          #+#    #+#             */
-/*   Updated: 2023/02/17 21:42:15 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/03/20 13:51:08 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int	check_string(t_list_tokens **sub_tokens, char *str)
 	return (1);
 }
 
-static char	*check_for_dollars(t_list_tokens *s_tokens)
+static char	*check_for_dollars(char **env, t_list_tokens *s_tokens)
 {
 	t_list_tokens	*curr;
 
@@ -92,7 +92,7 @@ static char	*check_for_dollars(t_list_tokens *s_tokens)
 		else if ((curr->type == D_QUOTE || curr->type == STRING)
 			&& ft_strchr(curr->str, '$'))
 		{
-			curr->str = get_dollar(curr->str, curr->type, 0);
+			curr->str = get_dollar(env, curr->str, curr->type, 0);
 			if (!curr->str)
 				return (NULL);
 		}
@@ -112,7 +112,7 @@ static char	*check_for_dollars(t_list_tokens *s_tokens)
 	ex. original token: "lolo"'$USERtot'"$USER,popo"
 	we send back the modified token as: lolo$USERtotmflores-,popo
 */
-int	handle_nodes(t_list_tokens *n)
+int	handle_nodes(t_prompt *p, t_list_tokens *n)
 {
 	t_list_tokens	*sub_tokens;
 
@@ -120,7 +120,7 @@ int	handle_nodes(t_list_tokens *n)
 	if (!check_string(&sub_tokens, n->str))
 		return (0);
 	free(n->str);
-	n->str = check_for_dollars(sub_tokens);
+	n->str = check_for_dollars(p->env, sub_tokens);
 	if (!n->str)
 	{
 		lstclear_token(&sub_tokens);

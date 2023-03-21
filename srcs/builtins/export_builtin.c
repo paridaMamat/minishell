@@ -3,26 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   export_builtin.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 09:21:00 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/16 16:58:14 by pmaimait         ###   ########.fr       */
+/*   Updated: 2023/03/21 13:53:22 by mflores-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"minishell.h"
-
-int	minishell_export(t_prompt *p, t_list_tokens *e_tokens, int fd)
-{
-	while (e_tokens->type != STRING && e_tokens->type != END
-		&& e_tokens->type != PIPE)
-		e_tokens = e_tokens->next;
-	if (e_tokens->type == END || e_tokens->type == PIPE)
-		print_export(p, fd);
-	else
-		export_arg(p, e_tokens);
-	return (g_exit_code);
-}
 
 static char	*make_arg(char *str)
 {
@@ -45,7 +33,29 @@ static char	*make_arg(char *str)
 	return (tmp);
 }
 
-int	add_to_env(t_prompt *p, char *arg, int i)
+static int	add_or_replace_env(t_prompt *p, char *line, char *str)
+{
+	int	i;
+	int	index;
+
+	i = 0;
+	index = check_in_env(p, str);
+	while (line[i] && (ft_isalnum(line[i]) || line[i] == '_'))
+		i++;
+	if (line[i] == '=')
+	{
+		free(p->env[index]);
+		p->env[index] = ft_strdup(line);
+	}
+	if (line[i] == '+' && line[i + 1] == '=')
+	{
+		str = ft_substr(line, (i + 2), ft_strlen(line));
+		p->env[index] = ft_strjoin_free(p->env[index], str);
+	}
+	return (0);
+}
+
+static int	add_to_env(t_prompt *p, char *arg, int i)
 {
 	char	*str;
 
@@ -67,7 +77,7 @@ int	add_to_env(t_prompt *p, char *arg, int i)
 	return (0);
 }
 
-int	export_arg(t_prompt *p, t_list_tokens *e_tokens)
+static int	export_arg(t_prompt *p, t_list_tokens *e_tokens)
 {
 	char	*arg;
 	int		i;
@@ -79,13 +89,14 @@ int	export_arg(t_prompt *p, t_list_tokens *e_tokens)
 			i = 0;
 			g_exit_code = 0;
 			arg = e_tokens->str;
-			while (arg[i] && (ft_isalpha(arg[i]) || ft_isalnum(arg[i])
+			while ((ft_isalpha(arg[0]) || arg[0] == '_')
+				&& arg[i] && (ft_isalpha(arg[i]) || ft_isalnum(arg[i])
 					|| arg[i] == '_'))
 				i++;
 			if (i != 0 && (arg[i] == '=' || (arg[i] == '+'
 						&& arg[i + 1] == '=')))
 				add_to_env(p, arg, i);
-			else if (arg[i])
+			else if (arg[i] || arg[0] == '\0')
 				print_perror_export(arg);
 		}
 		e_tokens = e_tokens->next;
@@ -93,24 +104,14 @@ int	export_arg(t_prompt *p, t_list_tokens *e_tokens)
 	return (g_exit_code);
 }
 
-int	add_or_replace_env(t_prompt *p, char *line, char *str)
+int	minishell_export(t_prompt *p, t_list_tokens *e_tokens, int fd)
 {
-	int	i;
-	int	index;
-
-	i = 0;
-	index = check_in_env(p, str);
-	while (line[i] && (ft_isalnum(line[i]) || line[i] == '_'))
-		i++;
-	if (line[i] == '=')
-	{
-		free(p->env[index]);
-		p->env[index] = ft_strdup(line);
-	}
-	if (line[i] == '+' && line[i + 1] == '=')
-	{
-		str = ft_substr(line, (i + 2), ft_strlen(line));
-		p->env[index] = ft_strjoin_free(p->env[index], str);
-	}
-	return (0);
+	while (e_tokens->type != STRING && e_tokens->type != END
+		&& e_tokens->type != PIPE)
+		e_tokens = e_tokens->next;
+	if (e_tokens->type == END || e_tokens->type == PIPE)
+		print_export(p, fd);
+	else
+		export_arg(p, e_tokens);
+	return (g_exit_code);
 }
