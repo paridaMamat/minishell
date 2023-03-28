@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_execution.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mflores- <mflores-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmaimait <pmaimait@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 17:19:29 by pmaimait          #+#    #+#             */
-/*   Updated: 2023/03/21 13:43:54 by mflores-         ###   ########.fr       */
+/*   Updated: 2023/03/28 13:50:29 by pmaimait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,13 @@ void	open_infile_outfile(t_prompt *p, t_list_tokens *tmp)
 		if (p->outfile != -2)
 			close(p->outfile);
 		p->outfile = open(tmp->next->str, O_CREAT | O_WRONLY
-				| O_APPEND, 0777);
+				| O_APPEND, 0644);
 	}
 	if (tmp->type == R_REDIR)
 	{
 		if (p->outfile != -2)
 			close(p->outfile);
-		p->outfile = open(tmp->next->str, O_CREAT | O_RDWR | O_TRUNC, 0777);
+		p->outfile = open(tmp->next->str, O_CREAT | O_RDWR | O_TRUNC, 0644);
 	}
 }
 
